@@ -40,8 +40,5 @@ other packages globally – everything lives in a virtual environment.
    This will pull in Django 2.2.28 and `bcrypt`. The file does **not** list
    Python itself – it can’t be installed by `pip`.
 
-4. **Start coding!**
-
-   Run Django management commands, run tests, whatever your project needs.
-
+   Now you are ready to start coding.
 ---
