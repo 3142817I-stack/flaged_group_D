@@ -1,0 +1,11 @@
+# Python virtual envs
+.venv/
+venv/
+env/
+
+# Byte‑compiled files
+__pycache__/
+*.py[cod]
+
+# Editor/temp files (optional)
+*.swp
