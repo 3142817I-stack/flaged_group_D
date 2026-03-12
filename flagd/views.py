@@ -10,7 +10,21 @@ def index(request):
     return render(request, 'flagd/index.html', context=context_dict)
 
 def about(request):
-    return HttpResponse("Abouuuuut")
+    context_dict = {}
+    return render(request, 'flagd/about.html', context=context_dict)
+
+def account(request):
+    context_dict = {}
+    return render(request, 'flagd/account.html', context=context_dict)
+
+def leaderboard(request):
+    context_dict = {}
+    return render(request, 'flagd/leaderboard.html', context=context_dict)
+
+def play(request):
+    context_dict = {}
+    return render(request, 'flagd/play.html', context=context_dict)
+
 
 #def about(request):
 #    return render(request, 'flagd/about.html')
