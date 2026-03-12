@@ -7,7 +7,7 @@ def index(request):
 
     #visitor_cookie_handler(request)
 
-    return render(request, 'flagd/templates/flagd/index.html', context=context_dict)
+    return render(request, 'flagd/index.html', context=context_dict)
 
 def about(request):
     return HttpResponse("Abouuuuut")

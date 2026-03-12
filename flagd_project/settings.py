@@ -20,8 +20,6 @@ MEDIA_DIR = os.path.join(BASE_DIR, 'media')
 
 
 
-
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
@@ -61,7 +59,7 @@ ROOT_URLCONF = 'flagd_project.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [TEMPLATE_DIR, ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -141,7 +139,7 @@ MEDIA_ROOT = MEDIA_DIR
 MEDIA_URL = '/media/'
 
 # login mappings
-LOGIN_URL = 'rango:login'
+LOGIN_URL = 'flagd:login'
 
 # login lengths and types
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
