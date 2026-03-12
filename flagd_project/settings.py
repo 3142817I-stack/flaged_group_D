@@ -49,7 +49,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'flagd.urls'
+ROOT_URLCONF = 'flagd_project.urls'
 
 TEMPLATES = [
     {
@@ -67,7 +67,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'flagd.wsgi.application'
+WSGI_APPLICATION = 'flagd_project.wsgi.application'
 
 
 # Database
