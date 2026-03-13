@@ -2,33 +2,33 @@
 {% load staticfiles %}
 
 <html>
-    <head lang="en">
-        <meta charset="UTF-8" />
-        <title>
-            {% block title_block %}
-                FlagD
-            {% endblock %}
-        </title>
-    </head>
-
-    <body>
-        <nav>
-            <ul>
-                <li><a href="{% url 'flagd:play' %}">Play</a></li>
-                <li><a href="{% url 'flagd:leaderboard' %}">Leaderboard</a></li>
-                <li><a href="{% url 'flagd:about' %}">About</a></li>
-                <li style="float:right"><a href="{% url 'flagd:account' %}">Login/Sign Up</a></li>
-            </ul>
-        </nav>
-
-        <div >
-        {% block body_block %}
+<head lang="en">
+    <meta charset="UTF-8"/>
+    <title>
+        {% block title_block %}
+            FlagD
         {% endblock %}
-        </div>
-        <div>
-            {% block footer_block %}
-                Copyright 2024 FlagD. All rights reserved.
-            {% endblock %}
-        </div>
-    </body>
+    </title>
+</head>
+
+<body>
+<nav>
+    <ul>
+        <li><a href="{% url 'flagd:play' %}">Play</a></li>
+        <li><a href="{% url 'flagd:leaderboard' %}">Leaderboard</a></li>
+        <li><a href="{% url 'flagd:about' %}">About</a></li>
+        <li style="float:right"><a href="{% url 'flagd:account' %}">Login/Sign Up</a></li>
+    </ul>
+</nav>
+
+<div>
+    {% block body_block %}
+    {% endblock %}
+</div>
+<div>
+    {% block footer_block %}
+        Copyright 2024 FlagD. All rights reserved.
+    {% endblock %}
+</div>
+</body>
 </html>
