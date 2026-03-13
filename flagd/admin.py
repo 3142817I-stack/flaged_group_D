@@ -1,13 +1,15 @@
 from django.contrib import admin
-#from rango.models import Category, Page
+from .models import User, Flag
 
-#class CategoryAdmin(admin.ModelAdmin):
-#    prepopulated_fields = {'slug':('name',)}
 
-#class PageAdmin(admin.ModelAdmin):
-#    list_display = ('title', 'category', 'url')
+@admin.register(User)
+class UserAdmin(admin.ModelAdmin):
+    list_display = ('username', 'email', 'is_guest', 'score', 'created_at')
+    list_filter = ('is_guest',)
+    search_fields = ('username', 'email')
 
-#admin.site.register(Category, CategoryAdmin)
-#admin.site.register(Page, PageAdmin)
 
-#admin.site.register(UserProfile)
+@admin.register(Flag)
+class FlagAdmin(admin.ModelAdmin):
+    list_display = ('country_name', 'regionmode', 'worldmode')
+    search_fields = ('country_name',)
