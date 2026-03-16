@@ -1,3 +1,55 @@
+/* Navbar Styling */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #2c3e50;
+    padding: 0 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand a {
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+    text-decoration: none;
+    padding: 15px 0;
+}
+
+.navbar-brand a:hover {
+    color: #3498db;
+}
+
+.navbar-menu {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 0;
+}
+
+.navbar-menu li {
+    border-right: 1px solid #34495e;
+}
+
+.navbar-menu li:last-child {
+    border-right: none;
+}
+
+.navbar-menu a {
+    display: block;
+    color: white;
+    text-decoration: none;
+    padding: 15px 20px;
+    transition: background-color 0.3s ease;
+}
+
+.navbar-menu a:hover {
+    background-color: #34495e;
+    color: #3498db;
+}
+
+/* Page Content */
 .modes-container {
     display: flex;
 }
