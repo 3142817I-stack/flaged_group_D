@@ -22,6 +22,15 @@
     border: 2px solid #ccc;
     padding: 20px;
     margin: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.continent-card img {
+    width: 55%;
+    height: auto;
+    margin-bottom: 10px;
 }
 
 #globe {
