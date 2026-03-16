@@ -21,13 +21,11 @@ class User(models.Model):
 class Flag(models.Model):
     flag_id = models.AutoField(primary_key=True)
     country_name = models.CharField(max_length=120)
-    image_url = models.URLField(blank=True)
-    regionmode = models.CharField(max_length=32, blank=True)
-    worldmode = models.CharField(max_length=32, blank=True)
+    continent = models.CharField(max_length=32, blank=True)
 
     class Meta:
         db_table = 'flag'
-        ordering = ['country_name']
+        ordering = ['flag_id']
 
     def __str__(self):
         return self.country_name

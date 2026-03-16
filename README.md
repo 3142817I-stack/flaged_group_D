@@ -41,4 +41,49 @@ other packages globally – everything lives in a virtual environment.
    Python itself – it can’t be installed by `pip`.
 
    Now you are ready to start coding.
+
+## Database Setup
+
+After installing the requirements, set up the database and populate it with initial data:
+
+1. **Run database migrations:**
+
+   ```bash
+   python manage.py makemigrations
+   python manage.py migrate
+   ```
+
+2. **Populate the database with dummy data:**
+
+   ```bash
+   python manage.py populate_db
+   ```
+
+   This command will:
+   - Create 23 dummy users with varying scores
+   - Create all 195 UN member countries with their continents
+   - Countries are ordered alphabetically (Afghanistan = ID 1, Zimbabwe = ID 195)
+
+3. **Create a superuser to access the admin panel:**
+
+   ```bash
+   python manage.py createsuperuser
+   ```
+
+   Enter a username, email, and password when prompted.
+
+4. **Start the development server:**
+
+   ```bash
+   python manage.py runserver
+   ```
+
+5. **Access the admin panel:**
+
+   Open your browser and go to: `http://127.0.0.1:8000/admin/`
+
+   Log in with the superuser credentials you created. You'll see:
+   - **Users** - View all dummy users with their scores
+   - **Flags** - View all 195 UN countries with their continents
+
 ---
