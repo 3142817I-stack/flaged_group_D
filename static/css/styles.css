@@ -1,0 +1,30 @@
+.modes-container {
+    display: flex;
+}
+
+.play-page {
+    text-align: center;
+}
+
+.mode {
+    flex: 1;
+    border: 2px solid #ccc;
+    padding: 20px;
+    margin: 5px;
+}
+
+.continents-container {
+    display: flex;
+}
+
+.continent-card {
+    flex: 1;
+    border: 2px solid #ccc;
+    padding: 20px;
+    margin: 5px;
+}
+
+#globe {
+    width: 20%;
+    height: auto;
+}

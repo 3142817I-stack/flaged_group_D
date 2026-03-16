@@ -6,23 +6,25 @@
 {% endblock %}
 
 {% block body_block %}
-    <h1>Select Game Mode</h1>
+    <div class="play-page">
+        <h1>Select Game Mode</h1>
 
-    <div class="modes">
-        <div class="mode">
-            <h2>Global</h2>
-            <div class="global-card">
-                <img src="{% static 'images/globe.png' %}" alt="Picture of a Globe"/>
+        <div class="modes-container">
+            <div class="mode">
+                <h2>Global</h2>
+                <div class="global-card">
+                    <img id="globe" src="{% static 'images/globe.png' %}" alt="Picture of a Globe"/>
+                </div>
             </div>
-        </div>
 
-        <div class="mode">
-            <h2>Continents</h2>
-            <div class="continents-grid">
-                <div class="continent-card">Europe</div>
-                <div class="continent-card">Africa</div>
-                <div class="continent-card">Asia Oceania</div>
-                <div class="continent-card">North South<br>America</div>
+            <div class="mode">
+                <h2>Continents</h2>
+                <div class="continents-container">
+                    <div class="continent-card">Europe</div>
+                    <div class="continent-card">Africa</div>
+                    <div class="continent-card">Asia Oceania</div>
+                    <div class="continent-card">North South<br>America</div>
+                </div>
             </div>
         </div>
     </div>
