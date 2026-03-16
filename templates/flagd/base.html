@@ -13,8 +13,11 @@
 </head>
 
 <body>
-<nav>
-    <ul>
+<nav class="navbar">
+    <div class="navbar-brand">
+        <a href="{% url 'flagd:index' %}">FlagD</a>
+    </div>
+    <ul class="navbar-menu">
         <li><a href="{% url 'flagd:play' %}">Play</a></li>
         <li><a href="{% url 'flagd:leaderboard' %}">Leaderboard</a></li>
         <li><a href="{% url 'flagd:about' %}">About</a></li>
