@@ -1,4 +1,4 @@
-s{% extends 'flagd/base.html' %}
+ {% extends 'flagd/base.html' %}
 {% load staticfiles %}
 
 {% block title_block %}
@@ -6,15 +6,18 @@ s{% extends 'flagd/base.html' %}
 {% endblock %}
 
 {% block body_block %}
-    <div class="play-page">
-        <h1>{{ mode_name }} Mode - Guess the Flag!</h1>
+    <div class="game-page">
+        <div class="game-header">
+            <h1>{{ mode_name }} Mode</h1>
+            <p>Guess the Flag!</p>
+        </div>
         
         <div class="back-link">
             <a href="{% url 'flagd:play' %}">&larr; Back to Mode Selection</a>
         </div>
 
         {% if flag %}
-        <div class="flag-display">
+        <div class="game-container">
             <div class="timer-container">
                 <div class="timer-display">
                     <span id="timer-seconds">{{ timer_duration }}</span>
@@ -24,19 +27,22 @@ s{% extends 'flagd/base.html' %}
                     <div id="timer-progress" class="timer-progress"></div>
                 </div>
             </div>
-            <div class="flag-container">
-                <img
-                    src="https://flagcdn.com/w320/{{ flag.country_code }}.png"
-                    srcset="https://flagcdn.com/w640/{{ flag.country_code }}.png 2x, https://flagcdn.com/w960/{{ flag.country_code }}.png 3x"
-                    alt="Flag of {{ flag.country_name }}"
-                    class="flag-image"
-                />
+            
+            <div class="flag-display">
+                <div class="flag-container">
+                    <img
+                        src="https://flagcdn.com/w320/{{ flag.country_code }}.png"
+                        srcset="https://flagcdn.com/w640/{{ flag.country_code }}.png 2x, https://flagcdn.com/w960/{{ flag.country_code }}.png 3x"
+                        alt="Flag of {{ flag.country_name }}"
+                        class="flag-image"
+                    />
+                </div>
+                <div class="guess-form">
+                    <input type="text" id="guess-input" placeholder="Enter country name..." autocomplete="off" />
+                    <button type="button" id="submit-guess">Submit Guess</button>
+                </div>
+                <div id="result-message"></div>
             </div>
-            <div class="guess-form">
-                <input type="text" id="guess-input" placeholder="Enter country name..." />
-                <button type="button" id="submit-guess">Submit Guess</button>
-            </div>
-            <div id="result-message"></div>
         </div>
         {% else %}
         <div class="no-flags">
