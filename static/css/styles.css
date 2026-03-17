@@ -79,20 +79,28 @@ body {
 /* Page Content */
 .modes-container {
     display: flex;
-    background-color: #fff;
+    background-color: rgba(255, 255, 255, 0.6); 
 }
 
 .play-page {
     text-align: center;
 }
 
-/* Game Page Styling */
+.mode {
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 12px;
+    flex: 1;
+    padding: 20px;
+    margin: 5px;
+}
+
 .game-page {
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 40px 20px;
     min-height: calc(100vh - 140px);
+    background-color: rgba(255, 255, 255, 0.2); 
 }
 
 .game-header {
@@ -116,7 +124,7 @@ body {
 .game-container {
     width: 100%;
     max-width: 520px;
-    background-color: #fff;
+    background-color: rgba(255, 255, 255, 0.7); 
     border-radius: 16px;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
     padding: 28px;
@@ -130,7 +138,7 @@ body {
 
 .continents-container {
     display: flex;
-    background-color: #fff;
+    background-color: rgba(255, 255, 255, 0.5); 
 }
 
 .continent-card {
@@ -141,15 +149,14 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: #fff;
-    
+    background-color: rgba(255, 255, 255, 0.5); 
 }
 
 .continent-card img {
     width: 55%;
     height: auto;
     margin-bottom: 10px;
-    background-color: #fff;
+    background-color: #fff; 
 }
 
 #globe {
@@ -159,8 +166,8 @@ body {
     width: 20%;
     height: auto;
     background-color: #fff;
+    
 }
-
 /* Leaderboard Styling */
 .leaderboard-container {
     display: flex;
@@ -193,7 +200,7 @@ body {
     max-width: 800px;
     border-collapse: separate;
     border-spacing: 0;
-    background-color: #fff;
+    background-color: rgba(255, 255, 255, 0.7);
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
     border-radius: 16px;
     overflow: hidden;
@@ -289,6 +296,20 @@ body {
     color: #cd7f32;
 }
 
+
+.leaderboard-table tbody tr:nth-child(1):hover {
+    background-color: rgba(255, 215, 0, 0.5); 
+}
+
+
+.leaderboard-table tbody tr:nth-child(2):hover {
+    background-color: rgba(192, 192, 192, 0.5); 
+}
+
+
+.leaderboard-table tbody tr:nth-child(3):hover {
+    background-color: rgba(205, 127, 50, 0.5); 
+}
 /* Other rows score color */
 .leaderboard-table tbody tr:not(:nth-child(1)):not(:nth-child(2)):not(:nth-child(3)) td:last-child {
     color: #27ae60;
