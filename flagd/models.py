@@ -1,46 +1,32 @@
 from django.db import models
-from django.template.defaultfilters import slugify
-#from django.contrib.auth.models import User
 
-#class Category(models.Model):
-#    NAME_MAX_LEN = 128
-#
-#    name = models.CharField(max_length= NAME_MAX_LEN, unique=True)
-#    views = models.IntegerField(default=0)
-#    likes = models.IntegerField(default=0)
-#    slug = models.SlugField(unique=True)
-#
-#    def save(self, *args, **kwargs):
-#        self.slug = slugify(self.name)
-#        super(Category, self).save(*args, **kwargs)
-#
-#    class Meta:
-#        verbose_name_plural = 'Categories'
-#
-#    def __str__(self):
-#        return self.name
-#
-#
-#class Page(models.Model):
-#    TITLE_MAX_LEN = 128
-#    URL_MAX_LEN = 200
-#
-#    category = models.ForeignKey(Category, on_delete=models.CASCADE)
-#    title = models.CharField(max_length=TITLE_MAX_LEN)
-#    url = models.URLField()
-#    views = models.IntegerField(default=0)
-#
-#    def __str__(self):
-#        return self.title
-#    
-#
-#class UserProfile(models.Model):
-#    # This line is required. Links UserProfile to a User model instance.
-#    user = models.OneToOneField(User, on_delete=models.CASCADE)
-#
-#    # The additional attributes we wish to include.
-#    website = models.URLField(blank=True)
-#    picture = models.ImageField(upload_to='profile_images', blank=True)
-#
-#    def __str__(self):
-#        return self.user.username
+
+class User(models.Model):
+    user_id = models.AutoField(primary_key=True)
+    username = models.CharField(max_length=150, unique=True)
+    email = models.EmailField(max_length=254, unique=True)
+    password_hash = models.CharField(max_length=128)
+    is_guest = models.BooleanField(default=False)
+    score = models.IntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'users'
+        ordering = ['-score', 'username']
+
+    def __str__(self):
+        return f"{self.username} ({'guest' if self.is_guest else 'user'})"
+
+
+class Flag(models.Model):
+    flag_id = models.AutoField(primary_key=True)
+    country_name = models.CharField(max_length=120)
+    country_code = models.CharField(max_length=2, blank=True, help_text="ISO 3166-1 alpha-2 code (e.g., 'ua' for Ukraine)")
+    continent = models.CharField(max_length=32, blank=True)
+
+    class Meta:
+        db_table = 'flag'
+        ordering = ['flag_id']
+
+    def __str__(self):
+        return self.country_name

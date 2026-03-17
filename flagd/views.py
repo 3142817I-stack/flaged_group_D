@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.shortcuts import redirect
+import random
 
 def index(request):
     context_dict = {}
@@ -18,12 +19,54 @@ def account(request):
     return render(request, 'flagd/account.html', context=context_dict)
 
 def leaderboard(request):
-    context_dict = {}
+    from flagd.models import User
+    users = User.objects.all().order_by('-score')
+    context_dict = {'users': users}
     return render(request, 'flagd/leaderboard.html', context=context_dict)
 
 def play(request):
+    # Show game mode selection only
     context_dict = {}
     return render(request, 'flagd/play.html', context=context_dict)
+
+def play_game(request, mode):
+    from flagd.models import Flag
+    from django.db.models import Q
+    
+    # Define mode display names
+    mode_names = {
+        'global': 'Global',
+        'europe': 'Europe',
+        'africa': 'Africa',
+        'asiaoceania': 'Asia Oceania',
+        'americas': 'Americas'
+    }
+    
+    # Get flags based on mode
+    if mode == 'global':
+        flags = Flag.objects.all()
+    elif mode == 'asiaoceania':
+        # Include both Asia and Oceania flags
+        flags = Flag.objects.filter(Q(continent__iexact='asia') | Q(continent__iexact='oceania'))
+    else:
+        # Filter by continent (case-insensitive)
+        flags = Flag.objects.filter(continent__iexact=mode)
+    
+    # Get a random flag for the game
+    if flags.exists():
+        flag = random.choice(flags)
+        context_dict = {
+            'flag': flag,
+            'mode': mode,
+            'mode_name': mode_names.get(mode, mode.title())
+        }
+    else:
+        context_dict = {
+            'mode': mode,
+            'mode_name': mode_names.get(mode, mode.title())
+        }
+    
+    return render(request, 'flagd/play_game.html', context=context_dict)
 
 
 #def about(request):

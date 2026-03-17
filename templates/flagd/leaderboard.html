@@ -6,5 +6,42 @@
 {% endblock %}
 
 {% block body_block %}
-<h1>World Top Scores</h1>
+    <div class="leaderboard-container">
+        <div class="leaderboard-header">
+            <h1>🏆 World Top Scores</h1>
+            <p>See how you rank against players worldwide</p>
+        </div>
+        <table class="leaderboard-table">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Player</th>
+                    <th>Score</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>
+                        {% if forloop.counter == 1 %}
+                            <span class="rank-badge rank-1">1</span>
+                        {% elif forloop.counter == 2 %}
+                            <span class="rank-badge rank-2">2</span>
+                        {% elif forloop.counter == 3 %}
+                            <span class="rank-badge rank-3">3</span>
+                        {% else %}
+                            <span class="rank-badge rank-default">{{ forloop.counter }}</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.score }}</td>
+                </tr>
+                {% empty %}
+                <tr class="empty-row">
+                    <td colspan="3">🎮 No players yet. Be the first to play!</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endblock %}
