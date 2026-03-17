@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 from django.db import connection
-from flagd.models import User, Flag
+from flagd.models import User, Flag, CountryAlias
 import hashlib
 
 
@@ -11,6 +11,7 @@ class Command(BaseCommand):
         self.stdout.write('Populating database...')
         
         # Clear existing data
+        CountryAlias.objects.all().delete()
         User.objects.all().delete()
         Flag.objects.all().delete()
         
@@ -18,6 +19,7 @@ class Command(BaseCommand):
         with connection.cursor() as cursor:
             cursor.execute("DELETE FROM sqlite_sequence WHERE name='users'")
             cursor.execute("DELETE FROM sqlite_sequence WHERE name='flag'")
+            cursor.execute("DELETE FROM sqlite_sequence WHERE name='country_alias'")
         
         self.stdout.write('Cleared existing data and reset ID counters.')
         
@@ -26,6 +28,9 @@ class Command(BaseCommand):
         
         # Create flags for all 192 UN countries
         self.create_flags()
+        
+        # Create country aliases
+        self.create_country_aliases()
         
         self.stdout.write(self.style.SUCCESS('Successfully populated database!'))
     
@@ -350,3 +355,65 @@ class Command(BaseCommand):
             flag_count += 1
         
         self.stdout.write(f'Created {flag_count} flags for UN member countries.')
+    
+    def create_country_aliases(self):
+        """Create alternative names for countries to help with user input matching."""
+        
+        # Mapping of country names to their common alternative names
+        # Format: 'Official Country Name': ['alias1', 'alias2', ...]
+        country_aliases = {
+            # Europe
+            'Czech Republic': ['Czechia'],
+            'United Kingdom': ['UK', 'Britain', 'Great Britain'],
+            'Netherlands': ['Holland'],
+            'North Macedonia': ['Macedonia'],
+            
+            # Africa
+            'Central African Republic': ['CAR'],
+            'Democratic Republic of the Congo': ['DRC', 'DR Congo'],
+            'Congo': ['Republic of the Congo'],
+            'Ivory Coast': ["Côte d'Ivoire", "Cote d'Ivoire"],
+            'Cabo Verde': ['Cape Verde'],
+            'Eswatini': ['Swaziland'],
+            'Sao Tome and Principe': ['São Tomé and Príncipe', 'Sao Tome'],
+            
+            # Americas
+            'United States': ['USA', 'US', 'America', 'United States of America'],
+            'Trinidad and Tobago': ['Trinidad & Tobago'],
+            'Saint Kitts and Nevis': ['St. Kitts and Nevis', 'St Kitts and Nevis'],
+            'Saint Lucia': ['St. Lucia', 'St Lucia'],
+            'Saint Vincent and the Grenadines': ['St. Vincent and the Grenadines', 'St Vincent and the Grenadines', 'St Vincent and Grenadines'],
+            'Antigua and Barbuda': ['Antigua & Barbuda'],
+            
+            # Asia
+            'South Korea': ['Republic of Korea', 'Korea'],
+            'North Korea': ['DPRK', 'Democratic People\'s Republic of Korea'],
+            'Myanmar': ['Burma'],
+            'Vietnam': ['Viet Nam'],
+            'Timor-Leste': ['East Timor'],
+            'United Arab Emirates': ['UAE'],
+            'Saudi Arabia': ['KSA'],
+            
+            # Oceania
+            'New Zealand': ['Aotearoa'],
+            'Palau': ['Republic of Palau'],
+            
+            # Other common variations
+            'Bahamas': ['The Bahamas'],
+            'Gambia': ['The Gambia'],
+        }
+        
+        alias_count = 0
+        for country_name, aliases in country_aliases.items():
+            try:
+                flag = Flag.objects.get(country_name=country_name)
+                for alias in aliases:
+                    CountryAlias.objects.create(
+                        flag=flag,
+                        alias_name=alias
+                    )
+                    alias_count += 1
+            except Flag.DoesNotExist:
+                self.stdout.write(self.style.WARNING(f'Country not found: {country_name}'))
+        
+        self.stdout.write(f'Created {alias_count} country aliases.')
