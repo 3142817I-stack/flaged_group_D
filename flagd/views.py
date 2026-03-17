@@ -31,6 +31,7 @@ def play(request):
 
 def play_game(request, mode):
     from flagd.models import Flag
+    from django.db.models import Q
     
     # Define mode display names
     mode_names = {
@@ -44,6 +45,9 @@ def play_game(request, mode):
     # Get flags based on mode
     if mode == 'global':
         flags = Flag.objects.all()
+    elif mode == 'asiaoceania':
+        # Include both Asia and Oceania flags
+        flags = Flag.objects.filter(Q(continent__iexact='asia') | Q(continent__iexact='oceania'))
     else:
         # Filter by continent (case-insensitive)
         flags = Flag.objects.filter(continent__iexact=mode)
