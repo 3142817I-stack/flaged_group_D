@@ -6,5 +6,28 @@
 {% endblock %}
 
 {% block body_block %}
-    <h1>Sign up or Login or continue as guest</h1>
+<h1>Login</h1>
+
+<form id="login_form" method="post" action="{% url 'flagd:account' %}">
+    {% csrf_token %}
+    Username: <input type="text" name="username" value="" size="50" />
+    <br />
+    Password: <input type="password" name="password" value="" size="50" />
+    <br />
+    <input type="submit" value="submit" />
+</form>
+
+
+
+<div>
+    <h1>Don't have an account?</h1>
+    <h2>Sign Up</h2>
+    <a href="{% url 'flagd:sign_up' %}">Sign Up Button</a>
+</div>
+
+<div>
+    <h2>Or Continue as Guest</h2>
+    <a href="{% url 'flagd:play' %}">Contiue as Guest</a>
+</div>
 {% endblock %}
+

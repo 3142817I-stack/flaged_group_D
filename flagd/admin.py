@@ -1,12 +1,14 @@
 from django.contrib import admin
-from .models import User, Flag
+from flagd.models import UserProfile, Flag
 
 
-@admin.register(User)
-class UserAdmin(admin.ModelAdmin):
-    list_display = ('username', 'email', 'is_guest', 'score', 'created_at')
-    list_filter = ('is_guest',)
-    search_fields = ('username', 'email')
+admin.site.register(UserProfile)
+
+#@admin.register(User)
+#class UserAdmin(admin.ModelAdmin):
+#    list_display = ('username', 'email', 'is_guest', 'score', 'created_at')
+#    list_filter = ('is_guest',)
+#    search_fields = ('username', 'email')
 
 
 @admin.register(Flag)
