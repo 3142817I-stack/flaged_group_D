@@ -12,9 +12,12 @@
         <div class="modes-container">
             <div class="mode">
                 <h2>Global</h2>
-                <div class="global-card">
-                    <img id="globe" src="{% static 'images/globe.png' %}" alt="Picture of a Globe"/>
-                </div>
+                <a href="{% url 'flagd:play_global' %}" class="mode-link">
+                    <div class="global-card">
+                        <img id="globe" src="{% static 'images/globe.png' %}" alt="Picture of a Globe"/>
+                    </div>
+                    <p class="mode-description">Guess flags from all countries around the world!</p>
+                </a>
             </div>
 
             <div class="mode">
@@ -37,6 +40,7 @@
                         <p>North South America</p>
                     </div>
                 </div>
+                <p class="mode-description">Coming soon!</p>
             </div>
         </div>
     </div>

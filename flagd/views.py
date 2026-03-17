@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.shortcuts import redirect
+import random
 
 def index(request):
     context_dict = {}
@@ -24,8 +25,22 @@ def leaderboard(request):
     return render(request, 'flagd/leaderboard.html', context=context_dict)
 
 def play(request):
+    # Show game mode selection only
     context_dict = {}
     return render(request, 'flagd/play.html', context=context_dict)
+
+def play_global(request):
+    from flagd.models import Flag
+    
+    # Get a random flag for the global game mode
+    flags = Flag.objects.all()
+    if flags.exists():
+        flag = random.choice(flags)
+        context_dict = {'flag': flag, 'mode': 'global'}
+    else:
+        context_dict = {'mode': 'global'}
+    
+    return render(request, 'flagd/play_global.html', context=context_dict)
 
 
 #def about(request):

@@ -1,0 +1,72 @@
+{% extends 'flagd/base.html' %}
+{% load staticfiles %}
+
+{% block title_block %}
+    Play Global Mode
+{% endblock %}
+
+{% block body_block %}
+    <div class="play-page">
+        <h1>Global Mode - Guess the Flag!</h1>
+        
+        <div class="back-link">
+            <a href="{% url 'flagd:play' %}">&larr; Back to Mode Selection</a>
+        </div>
+
+        {% if flag %}
+        <div class="flag-display">
+            <div class="flag-container">
+                <img
+                    src="https://flagcdn.com/w320/{{ flag.country_code }}.png"
+                    srcset="https://flagcdn.com/w640/{{ flag.country_code }}.png 2x, https://flagcdn.com/w960/{{ flag.country_code }}.png 3x"
+                    alt="Flag of {{ flag.country_name }}"
+                    class="flag-image"
+                />
+            </div>
+            <div class="guess-form">
+                <input type="text" id="guess-input" placeholder="Enter country name..." />
+                <button type="button" id="submit-guess">Submit Guess</button>
+            </div>
+            <div id="result-message"></div>
+        </div>
+        {% else %}
+        <div class="no-flags">
+            <p>No flags available. Please contact an administrator.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const submitButton = document.getElementById('submit-guess');
+            const guessInput = document.getElementById('guess-input');
+            const resultMessage = document.getElementById('result-message');
+            
+            {% if flag %}
+            const correctAnswer = "{{ flag.country_name }}".toLowerCase();
+            
+            submitButton.addEventListener('click', function() {
+                const userGuess = guessInput.value.trim().toLowerCase();
+                
+                if (userGuess === correctAnswer) {
+                    resultMessage.innerHTML = '<p class="correct">Correct! Well done!</p>';
+                    // Reload page after a short delay to get a new flag
+                    setTimeout(function() {
+                        window.location.reload();
+                    }, 1500);
+                } else {
+                    resultMessage.innerHTML = '<p class="incorrect">Incorrect. Try again!</p>';
+                }
+            });
+            
+            // Allow Enter key to submit
+            guessInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    submitButton.click();
+                }
+            });
+            {% endif %}
+        });
+    </script>
+{% endblock %}
+

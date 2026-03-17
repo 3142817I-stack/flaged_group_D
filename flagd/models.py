@@ -21,6 +21,7 @@ class User(models.Model):
 class Flag(models.Model):
     flag_id = models.AutoField(primary_key=True)
     country_name = models.CharField(max_length=120)
+    country_code = models.CharField(max_length=2, blank=True, help_text="ISO 3166-1 alpha-2 code (e.g., 'ua' for Ukraine)")
     continent = models.CharField(max_length=32, blank=True)
 
     class Meta:

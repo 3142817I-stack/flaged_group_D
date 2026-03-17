@@ -284,3 +284,150 @@ body {
 .trophy {
     margin-right: 8px;
 }
+
+/* Mode Link Styling */
+.mode-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.mode-link:hover {
+    transform: translateY(-5px);
+}
+
+.mode-link:hover .global-card {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.mode-description {
+    margin-top: 15px;
+    font-size: 14px;
+    color: #666;
+    font-style: italic;
+}
+
+/* Back Link Styling */
+.back-link {
+    margin: 20px 0;
+    text-align: left;
+}
+
+.back-link a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 16px;
+    padding: 10px 20px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+    display: inline-block;
+}
+
+.back-link a:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Flag Display Styling */
+.flag-display {
+    margin-top: 40px;
+    padding: 30px;
+    background-color: rgba(255, 255, 255, 0.95);
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.flag-container {
+    margin: 30px 0;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 12px;
+    display: inline-block;
+}
+
+.flag-image {
+    width: 320px;
+    height: auto;
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.guess-form {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.guess-form input {
+    padding: 12px 20px;
+    font-size: 16px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    width: 250px;
+    transition: border-color 0.3s ease;
+}
+
+.guess-form input:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.guess-form button {
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 600;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.guess-form button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+/* Result Messages */
+#result-message {
+    margin-top: 20px;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.correct {
+    color: #27ae60;
+    animation: pulse 0.5s ease;
+}
+
+.incorrect {
+    color: #e74c3c;
+    animation: shake 0.5s ease;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+/* No Flags Message */
+.no-flags {
+    margin-top: 40px;
+    padding: 30px;
+    background-color: rgba(255, 255, 255, 0.95);
+    border-radius: 16px;
+    color: #666;
+    font-size: 18px;
+}
