@@ -1,6 +1,11 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from django.shortcuts import redirect
+from django.urls import reverse
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from flagd.models import UserProfile
+from flagd.forms import UserForm, UserProfileForm #CategoryForm, PageForm, 
+from django.contrib.auth.models import User
 import random
 
 def index(request):
@@ -14,13 +19,9 @@ def about(request):
     context_dict = {}
     return render(request, 'flagd/about.html', context=context_dict)
 
-def account(request):
-    context_dict = {}
-    return render(request, 'flagd/account.html', context=context_dict)
-
 def leaderboard(request):
-    from flagd.models import User
-    users = User.objects.all().order_by('-score')
+    from django.contrib.auth.models import User #experiment - is this line needed?
+    users = User.objects.all().order_by('-userprofile__score') #removed 1 _
     context_dict = {'users': users}
     return render(request, 'flagd/leaderboard.html', context=context_dict)
 
@@ -102,5 +103,84 @@ def play_game(request, mode):
     return render(request, 'flagd/play_game.html', context=context_dict)
 
 
-#def about(request):
-#    return render(request, 'flagd/about.html')
+#all the account stuff
+
+#user_login equivalent
+def account(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        user = authenticate(username=username, password=password)
+
+        if user:
+            if user.is_active:
+                login(request, user)
+                return redirect(reverse('flagd:index'))
+            else:
+                return HttpResponse("Your Flag-D account is disabled.")
+        else:
+            print(f"Invalid login details: {username}, {password}")
+            return HttpResponse("Invalid login details supplied.")
+    else:
+        return render(request, 'flagd/account.html')
+
+
+#register equivalent
+def sign_up(request):
+    registered = False
+    created_user = None
+
+    if request.method == 'POST':
+        user_form = UserForm(request.POST)
+        profile_form = UserProfileForm(request.POST, request.FILES)
+
+        if user_form.is_valid() and profile_form.is_valid():
+            user = user_form.save()
+            user.set_password(user.password)
+            user.save()
+
+            profile = profile_form.save(commit=False)
+            profile.user = user
+
+            if 'picture' in request.FILES:
+                profile.picture = request.FILES['picture']
+            
+            profile.save()
+            registered = True
+            created_user=user
+
+        else:
+            print(user_form.errors, profile_form.errors)
+
+    else:
+        user_form = UserForm()
+        profile_form = UserProfileForm()
+    
+    return render(request, 'flagd/sign_up.html', context={'user_form': user_form, 'profile_form': profile_form, 'registered': registered, 'user': created_user})
+
+
+@login_required
+def user_profile(request, profile_name_slug):
+    try:
+        user = User.objects.get(username=profile_name_slug)
+        profile = user.userprofile
+    except User.DoesNotExist:
+        return HttpResponse("User not found.")
+    except UserProfile.DoesNotExist:
+        return HttpResponse("Profile not found.")
+
+    context_dict = {
+        'selected_user': user,
+        'profile': profile,
+    }
+    return render(request, 'flagd/user_profile.html', context=context_dict)
+
+@login_required
+def user_settings(request):
+    return render(request, 'flagd/user_settings.html')
+
+@login_required
+def user_logout(request):
+    logout(request)
+    return redirect(reverse('flagd:index'))
