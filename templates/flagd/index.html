@@ -11,7 +11,7 @@
     <h1> Welcome to FLAGD! </h1>
     <br></br>
     <h2>Learn world Flags and compete for top scores!</h2>
-    <a href="http://127.0.0.1:8000/flagd/about/">Learn More -></a>
+    <a href="{% url 'flagd:about' %}">Learn More -></a>
     <br></br>
-    <button type="Play" onclick="window.location.href='http://127.0.0.1:8000/flagd/play/';">Play</button>
+    <button type="Play" onclick="window.location.href='{% url 'flagd:play' %}'">Play</button>
 {% endblock %}
