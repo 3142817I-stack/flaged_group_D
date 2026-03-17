@@ -301,6 +301,15 @@ body {
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
 }
 
+.continent-link {
+    flex: 1;
+}
+
+.continent-link:hover .continent-card {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    border-color: #667eea;
+}
+
 .mode-description {
     margin-top: 15px;
     font-size: 14px;

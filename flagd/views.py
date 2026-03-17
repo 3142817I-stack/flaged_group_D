@@ -29,18 +29,40 @@ def play(request):
     context_dict = {}
     return render(request, 'flagd/play.html', context=context_dict)
 
-def play_global(request):
+def play_game(request, mode):
     from flagd.models import Flag
     
-    # Get a random flag for the global game mode
-    flags = Flag.objects.all()
+    # Define mode display names
+    mode_names = {
+        'global': 'Global',
+        'europe': 'Europe',
+        'africa': 'Africa',
+        'asiaoceania': 'Asia Oceania',
+        'americas': 'Americas'
+    }
+    
+    # Get flags based on mode
+    if mode == 'global':
+        flags = Flag.objects.all()
+    else:
+        # Filter by continent (case-insensitive)
+        flags = Flag.objects.filter(continent__iexact=mode)
+    
+    # Get a random flag for the game
     if flags.exists():
         flag = random.choice(flags)
-        context_dict = {'flag': flag, 'mode': 'global'}
+        context_dict = {
+            'flag': flag,
+            'mode': mode,
+            'mode_name': mode_names.get(mode, mode.title())
+        }
     else:
-        context_dict = {'mode': 'global'}
+        context_dict = {
+            'mode': mode,
+            'mode_name': mode_names.get(mode, mode.title())
+        }
     
-    return render(request, 'flagd/play_global.html', context=context_dict)
+    return render(request, 'flagd/play_game.html', context=context_dict)
 
 
 #def about(request):
