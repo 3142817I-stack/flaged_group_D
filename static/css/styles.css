@@ -312,9 +312,11 @@ body {
 
 .mode-description {
     margin-top: 15px;
-    font-size: 14px;
-    color: #666;
+    font-size: 16px;
+    color: #fff;
     font-style: italic;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+    font-weight: 500;
 }
 
 /* Back Link Styling */
