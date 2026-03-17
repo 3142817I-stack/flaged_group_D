@@ -29,6 +29,22 @@ def play(request):
     context_dict = {}
     return render(request, 'flagd/play.html', context=context_dict)
 
+def play_timer(request, mode):
+    # Show timer selection screen
+    mode_names = {
+        'global': 'Global',
+        'europe': 'Europe',
+        'africa': 'Africa',
+        'asiaoceania': 'Asia Oceania',
+        'americas': 'Americas'
+    }
+    
+    context_dict = {
+        'mode': mode,
+        'mode_name': mode_names.get(mode, mode.title())
+    }
+    return render(request, 'flagd/play_timer.html', context=context_dict)
+
 def play_game(request, mode):
     from flagd.models import Flag, CountryAlias
     from django.db.models import Q
@@ -41,6 +57,18 @@ def play_game(request, mode):
         'asiaoceania': 'Asia Oceania',
         'americas': 'Americas'
     }
+    
+    # Get timer duration from query parameter (default to 30 seconds)
+    timer_duration = request.GET.get('timer', '30')
+    try:
+        timer_duration = int(timer_duration)
+        # Validate timer duration (between 5 and 120 seconds)
+        if timer_duration < 5:
+            timer_duration = 5
+        elif timer_duration > 120:
+            timer_duration = 120
+    except ValueError:
+        timer_duration = 30
     
     # Get flags based on mode
     if mode == 'global':
@@ -61,12 +89,14 @@ def play_game(request, mode):
             'flag': flag,
             'aliases': aliases,
             'mode': mode,
-            'mode_name': mode_names.get(mode, mode.title())
+            'mode_name': mode_names.get(mode, mode.title()),
+            'timer_duration': timer_duration
         }
     else:
         context_dict = {
             'mode': mode,
-            'mode_name': mode_names.get(mode, mode.title())
+            'mode_name': mode_names.get(mode, mode.title()),
+            'timer_duration': timer_duration
         }
     
     return render(request, 'flagd/play_game.html', context=context_dict)

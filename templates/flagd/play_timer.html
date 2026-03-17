@@ -1,0 +1,94 @@
+{% extends 'flagd/base.html' %}
+{% load staticfiles %}
+
+{% block title_block %}
+    Select Timer - {{ mode_name }} Mode
+{% endblock %}
+
+{% block body_block %}
+    <div class="timer-selection-page">
+        <div class="timer-selection-header">
+            <h1>{{ mode_name }} Mode</h1>
+            <p>Choose your time limit per flag</p>
+        </div>
+        
+        <div class="back-link">
+            <a href="{% url 'flagd:play' %}">&larr; Back to Mode Selection</a>
+        </div>
+
+        <div class="timer-selection-container">
+            <div class="timer-options">
+                <a href="{% url 'flagd:play_game' mode=mode %}?timer=10" class="timer-option">
+                    <div class="timer-option-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                    </div>
+                    <div class="timer-option-content">
+                        <span class="timer-option-value">10</span>
+                        <span class="timer-option-label">seconds</span>
+                    </div>
+                    <span class="timer-option-difficulty difficulty-hard">Hard</span>
+                </a>
+                
+                <a href="{% url 'flagd:play_game' mode=mode %}?timer=20" class="timer-option">
+                    <div class="timer-option-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                    </div>
+                    <div class="timer-option-content">
+                        <span class="timer-option-value">20</span>
+                        <span class="timer-option-label">seconds</span>
+                    </div>
+                    <span class="timer-option-difficulty difficulty-medium">Medium</span>
+                </a>
+                
+                <a href="{% url 'flagd:play_game' mode=mode %}?timer=30" class="timer-option timer-option-recommended">
+                    <div class="timer-option-badge">Recommended</div>
+                    <div class="timer-option-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                    </div>
+                    <div class="timer-option-content">
+                        <span class="timer-option-value">30</span>
+                        <span class="timer-option-label">seconds</span>
+                    </div>
+                    <span class="timer-option-difficulty difficulty-easy">Easy</span>
+                </a>
+                
+                <a href="{% url 'flagd:play_game' mode=mode %}?timer=45" class="timer-option">
+                    <div class="timer-option-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                    </div>
+                    <div class="timer-option-content">
+                        <span class="timer-option-value">45</span>
+                        <span class="timer-option-label">seconds</span>
+                    </div>
+                    <span class="timer-option-difficulty difficulty-relaxed">Relaxed</span>
+                </a>
+                
+                <a href="{% url 'flagd:play_game' mode=mode %}?timer=60" class="timer-option">
+                    <div class="timer-option-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                    </div>
+                    <div class="timer-option-content">
+                        <span class="timer-option-value">60</span>
+                        <span class="timer-option-label">seconds</span>
+                    </div>
+                    <span class="timer-option-difficulty difficulty-practice">Practice</span>
+                </a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

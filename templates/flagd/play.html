@@ -12,7 +12,7 @@
         <div class="modes-container">
             <div class="mode">
                 <h2>Global</h2>
-                <a href="{% url 'flagd:play_game' mode='global' %}" class="mode-link">
+                <a href="{% url 'flagd:play_timer' mode='global' %}" class="mode-link">
                     <div class="global-card">
                         <img id="globe" src="{% static 'images/globe.png' %}" alt="Picture of a Globe"/>
                     </div>
@@ -23,25 +23,25 @@
             <div class="mode">
                 <h2>Continents</h2>
                 <div class="continents-container">
-                    <a href="{% url 'flagd:play_game' mode='europe' %}" class="mode-link continent-link">
+                    <a href="{% url 'flagd:play_timer' mode='europe' %}" class="mode-link continent-link">
                         <div class="continent-card">
                             <img src="{% static 'images/europe.png' %}" alt="Picture of Europe"/>
                             <p>Europe</p>
                         </div>
                     </a>
-                    <a href="{% url 'flagd:play_game' mode='africa' %}" class="mode-link continent-link">
+                    <a href="{% url 'flagd:play_timer' mode='africa' %}" class="mode-link continent-link">
                         <div class="continent-card">
                             <img src="{% static 'images/africa.png' %}" alt="Picture of Africa"/>
                             <p>Africa</p>
                         </div>
                     </a>
-                    <a href="{% url 'flagd:play_game' mode='asiaoceania' %}" class="mode-link continent-link">
+                    <a href="{% url 'flagd:play_timer' mode='asiaoceania' %}" class="mode-link continent-link">
                         <div class="continent-card">
                             <img src="{% static 'images/asiaoceania.png' %}" alt="Picture of Asia Oceania"/>
                             <p>Asia Oceania</p>
                         </div>
                     </a>
-                    <a href="{% url 'flagd:play_game' mode='americas' %}" class="mode-link continent-link">
+                    <a href="{% url 'flagd:play_timer' mode='americas' %}" class="mode-link continent-link">
                         <div class="continent-card">
                             <img src="{% static 'images/americas.png' %}" alt="Picture of Americas"/>
                             <p>Americas</p>
