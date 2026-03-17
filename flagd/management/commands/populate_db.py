@@ -401,6 +401,7 @@ class Command(BaseCommand):
             # Other common variations
             'Bahamas': ['The Bahamas'],
             'Gambia': ['The Gambia'],
+            'Vatican City': ['Vatican'],
         }
         
         alias_count = 0
