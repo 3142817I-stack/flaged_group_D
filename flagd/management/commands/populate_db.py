@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 from django.db import connection
-from flagd.models import User, Flag, CountryAlias
-import hashlib
+from django.contrib.auth.models import User
+from flagd.models import UserProfile, Flag, CountryAlias
 
 
 class Command(BaseCommand):
@@ -12,12 +12,14 @@ class Command(BaseCommand):
         
         # Clear existing data
         CountryAlias.objects.all().delete()
+        UserProfile.objects.all().delete()
         User.objects.all().delete()
         Flag.objects.all().delete()
         
         # Reset SQLite auto-increment counters
         with connection.cursor() as cursor:
-            cursor.execute("DELETE FROM sqlite_sequence WHERE name='users'")
+            cursor.execute("DELETE FROM sqlite_sequence WHERE name='auth_user'")
+            cursor.execute("DELETE FROM sqlite_sequence WHERE name='flagd_userprofile'")
             cursor.execute("DELETE FROM sqlite_sequence WHERE name='flag'")
             cursor.execute("DELETE FROM sqlite_sequence WHERE name='country_alias'")
         
@@ -38,46 +40,39 @@ class Command(BaseCommand):
         """Create dummy users with varying scores for leaderboard testing."""
         users_data = [
             # Top players
-            {'username': 'FlagMaster', 'email': 'flagmaster@example.com', 'score': 9850, 'is_guest': False},
-            {'username': 'GeographyKing', 'email': 'geoking@example.com', 'score': 9200, 'is_guest': False},
-            {'username': 'WorldExplorer', 'email': 'explorer@example.com', 'score': 8750, 'is_guest': False},
-            {'username': 'MapWhiz', 'email': 'mapwhiz@example.com', 'score': 8500, 'is_guest': False},
-            {'username': 'FlagNinja', 'email': 'ninja@example.com', 'score': 8100, 'is_guest': False},
+            {'username': 'FlagMaster', 'email': 'flagmaster@example.com', 'score': 9850},
+            {'username': 'GeographyKing', 'email': 'geoking@example.com', 'score': 9200},
+            {'username': 'WorldExplorer', 'email': 'explorer@example.com', 'score': 8750},
+            {'username': 'MapWhiz', 'email': 'mapwhiz@example.com', 'score': 8500},
+            {'username': 'FlagNinja', 'email': 'ninja@example.com', 'score': 8100},
             
             # Mid-tier players
-            {'username': 'TravelBug', 'email': 'travel@example.com', 'score': 6500, 'is_guest': False},
-            {'username': 'AtlasFan', 'email': 'atlas@example.com', 'score': 5800, 'is_guest': False},
-            {'username': 'GlobeTrotter', 'email': 'globe@example.com', 'score': 5200, 'is_guest': False},
-            {'username': 'FlagLover', 'email': 'lover@example.com', 'score': 4800, 'is_guest': False},
-            {'username': 'CountryQuiz', 'email': 'quiz@example.com', 'score': 4200, 'is_guest': False},
-            {'username': 'MapReader', 'email': 'reader@example.com', 'score': 3800, 'is_guest': False},
-            {'username': 'GeoGenius', 'email': 'genius@example.com', 'score': 3500, 'is_guest': False},
+            {'username': 'TravelBug', 'email': 'travel@example.com', 'score': 6500},
+            {'username': 'AtlasFan', 'email': 'atlas@example.com', 'score': 5800},
+            {'username': 'GlobeTrotter', 'email': 'globe@example.com', 'score': 5200},
+            {'username': 'FlagLover', 'email': 'lover@example.com', 'score': 4800},
+            {'username': 'CountryQuiz', 'email': 'quiz@example.com', 'score': 4200},
+            {'username': 'MapReader', 'email': 'reader@example.com', 'score': 3800},
+            {'username': 'GeoGenius', 'email': 'genius@example.com', 'score': 3500},
             
             # Lower-tier players
-            {'username': 'BeginnerBob', 'email': 'bob@example.com', 'score': 2100, 'is_guest': False},
-            {'username': 'NewPlayer123', 'email': 'newplayer@example.com', 'score': 1500, 'is_guest': False},
-            {'username': 'LearningFlags', 'email': 'learning@example.com', 'score': 1200, 'is_guest': False},
-            {'username': 'CasualGamer', 'email': 'casual@example.com', 'score': 800, 'is_guest': False},
-            {'username': 'JustStarted', 'email': 'started@example.com', 'score': 450, 'is_guest': False},
-            {'username': 'FlagNewbie', 'email': 'newbie@example.com', 'score': 200, 'is_guest': False},
-            
-            # Guest users
-            {'username': 'Guest_7392', 'email': 'guest7392@temp.com', 'score': 3200, 'is_guest': True},
-            {'username': 'Guest_4521', 'email': 'guest4521@temp.com', 'score': 1800, 'is_guest': True},
-            {'username': 'Guest_8834', 'email': 'guest8834@temp.com', 'score': 950, 'is_guest': True},
-            {'username': 'Guest_2156', 'email': 'guest2156@temp.com', 'score': 600, 'is_guest': True},
-            {'username': 'Guest_9012', 'email': 'guest9012@temp.com', 'score': 150, 'is_guest': True},
+            {'username': 'BeginnerBob', 'email': 'bob@example.com', 'score': 2100},
+            {'username': 'NewPlayer123', 'email': 'newplayer@example.com', 'score': 1500},
+            {'username': 'LearningFlags', 'email': 'learning@example.com', 'score': 1200},
+            {'username': 'CasualGamer', 'email': 'casual@example.com', 'score': 800},
+            {'username': 'JustStarted', 'email': 'started@example.com', 'score': 450},
+            {'username': 'FlagNewbie', 'email': 'newbie@example.com', 'score': 200},
         ]
         
         for user_data in users_data:
-            # Create a simple hash for the password (SHA256 produces 64 hex chars, fits in max_length=128)
-            password_hash = hashlib.sha256('password123'.encode()).hexdigest()
-            
-            User.objects.create(
+            user = User.objects.create_user(
                 username=user_data['username'],
                 email=user_data['email'],
-                password_hash=password_hash,
-                is_guest=user_data['is_guest'],
+                password = 'password123'
+            )
+
+            UserProfile.objects.create(
+                user=user,
                 score=user_data['score']
             )
         
