@@ -1,4 +1,4 @@
-{% extends 'flagd/base.html' %}
+s{% extends 'flagd/base.html' %}
 {% load staticfiles %}
 
 {% block title_block %}
@@ -44,11 +44,18 @@
             
             {% if flag %}
             const correctAnswer = "{{ flag.country_name }}".toLowerCase();
+            const aliases = [
+                "{{ flag.country_name }}".toLowerCase()
+                {% for alias in aliases %}
+                , "{{ alias }}".toLowerCase()
+                {% endfor %}
+            ];
             
             submitButton.addEventListener('click', function() {
                 const userGuess = guessInput.value.trim().toLowerCase();
                 
-                if (userGuess === correctAnswer) {
+                // Check if guess matches country name or any alias
+                if (aliases.includes(userGuess)) {
                     resultMessage.innerHTML = '<p class="correct">Correct! Well done!</p>';
                     // Reload page after a short delay to get a new flag
                     setTimeout(function() {

@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 from django.db import connection
-from flagd.models import User, Flag
+from flagd.models import User, Flag, CountryAlias
 import hashlib
 
 
@@ -11,6 +11,7 @@ class Command(BaseCommand):
         self.stdout.write('Populating database...')
         
         # Clear existing data
+        CountryAlias.objects.all().delete()
         User.objects.all().delete()
         Flag.objects.all().delete()
         
@@ -18,6 +19,7 @@ class Command(BaseCommand):
         with connection.cursor() as cursor:
             cursor.execute("DELETE FROM sqlite_sequence WHERE name='users'")
             cursor.execute("DELETE FROM sqlite_sequence WHERE name='flag'")
+            cursor.execute("DELETE FROM sqlite_sequence WHERE name='country_alias'")
         
         self.stdout.write('Cleared existing data and reset ID counters.')
         
@@ -26,6 +28,9 @@ class Command(BaseCommand):
         
         # Create flags for all 192 UN countries
         self.create_flags()
+        
+        # Create country aliases
+        self.create_country_aliases()
         
         self.stdout.write(self.style.SUCCESS('Successfully populated database!'))
     
@@ -350,3 +355,196 @@ class Command(BaseCommand):
             flag_count += 1
         
         self.stdout.write(f'Created {flag_count} flags for UN member countries.')
+    
+    def create_country_aliases(self):
+        """Create alternative names for countries to help with user input matching."""
+        
+        # Mapping of country names to their common alternative names
+        # Format: 'Official Country Name': ['alias1', 'alias2', ...]
+        country_aliases = {
+            # Europe
+            'Czech Republic': ['Czechia'],
+            'United Kingdom': ['UK', 'Britain', 'Great Britain'],
+            'Netherlands': ['Holland'],
+            'Russia': ['Russian Federation'],
+            'North Macedonia': ['Macedonia'],
+            'Moldova': ['Republic of Moldova'],
+            'Bosnia and Herzegovina': ['Bosnia'],
+            'Switzerland': ['Swiss'],
+            'Luxembourg': ['Lux'],
+            'Slovakia': ['Slovak'],
+            'Croatia': ['Croat'],
+            'Serbia': ['Serb'],
+            'Bulgaria': ['Bulg'],
+            'Romania': ['Rom'],
+            'Hungary': ['Hung'],
+            'Greece': ['Greek'],
+            'Estonia': ['Eston'],
+            'Latvia': ['Latv'],
+            'Lithuania': ['Lith'],
+            'Finland': ['Fin'],
+            'Sweden': ['Swed'],
+            'Norway': ['Nor'],
+            'Denmark': ['Den'],
+            'Iceland': ['Ice'],
+            'Ireland': ['Ire'],
+            'Portugal': ['Port'],
+            'Spain': ['Span'],
+            'Italy': ['Ital'],
+            'Poland': ['Pol'],
+            'Ukraine': ['Ukr'],
+            'Belarus': ['Bel'],
+            'Austria': ['Aus'],
+            'Belgium': ['Belg'],
+            'France': ['Fr'],
+            'Germany': ['Ger'],
+            
+            # Africa
+            'Central African Republic': ['CAR'],
+            'Democratic Republic of the Congo': ['DRC', 'DR Congo'],
+            'Congo': ['Republic of the Congo'],
+            'Ivory Coast': ["Côte d'Ivoire", "Cote d'Ivoire"],
+            'Cabo Verde': ['Cape Verde'],
+            'Eswatini': ['Swaziland'],
+            'Sao Tome and Principe': ['São Tomé and Príncipe', 'Sao Tome'],
+            'Equatorial Guinea': ['Eq Guinea'],
+            'Burkina Faso': ['Burkina'],
+            'Sierra Leone': ['Sierra'],
+            'South Africa': ['SA'],
+            'Tanzania': ['Tanz'],
+            'Mozambique': ['Moz'],
+            'Madagascar': ['Mad'],
+            'Cameroon': ['Cam'],
+            'Senegal': ['Sen'],
+            'Botswana': ['Bots'],
+            'Namibia': ['Nam'],
+            'Zimbabwe': ['Zim'],
+            'Zambia': ['Zam'],
+            'Malawi': ['Mal'],
+            'Rwanda': ['Rwan'],
+            'Uganda': ['Ug'],
+            'Kenya': ['Ken'],
+            'Ethiopia': ['Ethi'],
+            'Somalia': ['Som'],
+            'Libya': ['Libya'],
+            'Tunisia': ['Tunis'],
+            'Morocco': ['Moroc'],
+            'Algeria': ['Alg'],
+            'Nigeria': ['Nig'],
+            'Ghana': ['Ghana'],
+            'Liberia': ['Lib'],
+            'Libya': ['Libya'],
+            'Guinea': ['Guin'],
+            'Gabon': ['Gab'],
+            'Angola': ['Ang'],
+            'Benin': ['Ben'],
+            'Togo': ['Togo'],
+            'Niger': ['Niger'],
+            'Mali': ['Mali'],
+            'Chad': ['Chad'],
+            
+            # Americas
+            'United States': ['USA', 'US', 'America', 'United States of America'],
+            'Trinidad and Tobago': ['Trinidad & Tobago'],
+            'Saint Kitts and Nevis': ['St. Kitts and Nevis', 'St Kitts and Nevis'],
+            'Saint Lucia': ['St. Lucia', 'St Lucia'],
+            'Saint Vincent and the Grenadines': ['St. Vincent and the Grenadines', 'St Vincent and the Grenadines', 'St Vincent and Grenadines'],
+            'Antigua and Barbuda': ['Antigua & Barbuda'],
+            'Dominican Republic': ['DR'],
+            'El Salvador': ['Salvador'],
+            'Costa Rica': ['Costa'],
+            'Guatemala': ['Guat'],
+            'Honduras': ['Hond'],
+            'Nicaragua': ['Nicar'],
+            'Panama': ['Pan'],
+            'Colombia': ['Colomb'],
+            'Venezuela': ['Ven'],
+            'Ecuador': ['Ecu'],
+            'Bolivia': ['Bol'],
+            'Paraguay': ['Para'],
+            'Uruguay': ['Uru'],
+            'Argentina': ['Arg'],
+            'Brazil': ['Br'],
+            'Mexico': ['Mex'],
+            'Canada': ['Can'],
+            'Jamaica': ['Jam'],
+            'Cuba': ['Cuba'],
+            'Haiti': ['Haiti'],
+            'Barbados': ['Barb'],
+            'Bahamas': ['The Bahamas'],
+            
+            # Asia
+            'South Korea': ['Republic of Korea', 'Korea'],
+            'North Korea': ['DPRK', 'Democratic People\'s Republic of Korea'],
+            'Myanmar': ['Burma'],
+            'Vietnam': ['Viet Nam'],
+            'Timor-Leste': ['East Timor'],
+            'United Arab Emirates': ['UAE'],
+            'Saudi Arabia': ['KSA'],
+            'Philippines': ['Phil'],
+            'Indonesia': ['Indo'],
+            'Malaysia': ['Malay'],
+            'Singapore': ['Sing'],
+            'Thailand': ['Thai'],
+            'Cambodia': ['Camb'],
+            'Laos': ['Lao'],
+            'Mongolia': ['Mong'],
+            'Japan': ['Jap'],
+            'India': ['Ind'],
+            'Pakistan': ['Pak'],
+            'Bangladesh': ['Bang'],
+            'Sri Lanka': ['Sri'],
+            'Nepal': ['Nepal'],
+            'Bhutan': ['Bhut'],
+            'Afghanistan': ['Afghan'],
+            'Iran': ['Iran'],
+            'Iraq': ['Iraq'],
+            'Syria': ['Syr'],
+            'Lebanon': ['Leban'],
+            'Jordan': ['Jord'],
+            'Israel': ['Isr'],
+            'Kuwait': ['Kuw'],
+            'Qatar': ['Qat'],
+            'Bahrain': ['Bah'],
+            'Oman': ['Oman'],
+            'Yemen': ['Yemen'],
+            'Kazakhstan': ['Kaz'],
+            'Uzbekistan': ['Uzb'],
+            'Turkmenistan': ['Turk'],
+            'Tajikistan': ['Taj'],
+            'Kyrgyzstan': ['Kyrg'],
+            'Azerbaijan': ['Azer'],
+            'Armenia': ['Arm'],
+            'Georgia': ['Geo'],
+            'Turkey': ['Turk'],
+            'Cyprus': ['Cyp'],
+            
+            # Oceania
+            'New Zealand': ['Aotearoa', 'NZ'],
+            'Australia': ['Aus'],
+            'Papua New Guinea': ['PNG'],
+            'Solomon Islands': ['Solomons'],
+            'Vanuatu': ['Van'],
+            'Micronesia': ['FSM'],
+            'Palau': ['Republic of Palau'],
+            'Marshall Islands': ['Marshalls'],
+            
+            # Other common variations
+            'Gambia': ['The Gambia'],
+            'Vatican City': ['Vatican'],
+        }
+        
+        alias_count = 0
+        for country_name, aliases in country_aliases.items():
+            try:
+                flag = Flag.objects.get(country_name=country_name)
+                for alias in aliases:
+                    CountryAlias.objects.create(
+                        flag=flag,
+                        alias_name=alias
+                    )
+                    alias_count += 1
+            except Flag.DoesNotExist:
+                self.stdout.write(self.style.WARNING(f'Country not found: {country_name}'))
+        
+        self.stdout.write(f'Created {alias_count} country aliases.')

@@ -30,7 +30,7 @@ def play(request):
     return render(request, 'flagd/play.html', context=context_dict)
 
 def play_game(request, mode):
-    from flagd.models import Flag
+    from flagd.models import Flag, CountryAlias
     from django.db.models import Q
     
     # Define mode display names
@@ -55,8 +55,11 @@ def play_game(request, mode):
     # Get a random flag for the game
     if flags.exists():
         flag = random.choice(flags)
+        # Get all aliases for this flag
+        aliases = list(flag.aliases.values_list('alias_name', flat=True))
         context_dict = {
             'flag': flag,
+            'aliases': aliases,
             'mode': mode,
             'mode_name': mode_names.get(mode, mode.title())
         }
