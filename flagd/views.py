@@ -141,7 +141,12 @@ def play_game(request, mode):
         current_question = 1
     
     # Get already shown flags from session to avoid duplicates
-    shown_flags = request.session.get('shown_flags', [])
+    # Clear session if starting a new game (current_question is 1)
+    if current_question == 1:
+        request.session['shown_flags'] = []
+        shown_flags = []
+    else:
+        shown_flags = request.session.get('shown_flags', [])
     
     # Get flags based on mode
     if mode == 'global':
