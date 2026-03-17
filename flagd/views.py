@@ -18,7 +18,9 @@ def account(request):
     return render(request, 'flagd/account.html', context=context_dict)
 
 def leaderboard(request):
-    context_dict = {}
+    from flagd.models import User
+    users = User.objects.all().order_by('-score')
+    context_dict = {'users': users}
     return render(request, 'flagd/leaderboard.html', context=context_dict)
 
 def play(request):
