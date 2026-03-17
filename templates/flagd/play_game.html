@@ -15,6 +15,15 @@ s{% extends 'flagd/base.html' %}
 
         {% if flag %}
         <div class="flag-display">
+            <div class="timer-container">
+                <div class="timer-display">
+                    <span id="timer-seconds">30</span>
+                    <span class="timer-label">seconds</span>
+                </div>
+                <div class="timer-bar">
+                    <div id="timer-progress" class="timer-progress"></div>
+                </div>
+            </div>
             <div class="flag-container">
                 <img
                     src="https://flagcdn.com/w320/{{ flag.country_code }}.png"
@@ -41,6 +50,11 @@ s{% extends 'flagd/base.html' %}
             const submitButton = document.getElementById('submit-guess');
             const guessInput = document.getElementById('guess-input');
             const resultMessage = document.getElementById('result-message');
+            const timerSeconds = document.getElementById('timer-seconds');
+            const timerProgress = document.getElementById('timer-progress');
+            
+            // Timer configuration - easy to change!
+            const TIMER_DURATION = 30; // seconds
             
             {% if flag %}
             const correctAnswer = "{{ flag.country_name }}".toLowerCase();
@@ -51,18 +65,89 @@ s{% extends 'flagd/base.html' %}
                 {% endfor %}
             ];
             
+            let timeRemaining = TIMER_DURATION;
+            let timerInterval = null;
+            let isAnswered = false;
+            
+            // Initialize timer
+            function startTimer() {
+                timeRemaining = TIMER_DURATION;
+                timerSeconds.textContent = timeRemaining;
+                timerProgress.style.width = '100%';
+                timerProgress.classList.remove('warning', 'danger');
+                
+                timerInterval = setInterval(function() {
+                    timeRemaining--;
+                    timerSeconds.textContent = timeRemaining;
+                    
+                    // Update progress bar
+                    const percentage = (timeRemaining / TIMER_DURATION) * 100;
+                    timerProgress.style.width = percentage + '%';
+                    
+                    // Add warning classes based on time remaining
+                    if (timeRemaining <= 5) {
+                        timerProgress.classList.add('danger');
+                        timerProgress.classList.remove('warning');
+                    } else if (timeRemaining <= 10) {
+                        timerProgress.classList.add('warning');
+                    }
+                    
+                    // Time's up!
+                    if (timeRemaining <= 0) {
+                        clearInterval(timerInterval);
+                        handleTimeUp();
+                    }
+                }, 1000);
+            }
+            
+            // Handle when time runs out
+            function handleTimeUp() {
+                if (isAnswered) return;
+                isAnswered = true;
+                
+                guessInput.disabled = true;
+                submitButton.disabled = true;
+                
+                resultMessage.innerHTML = '<p class="time-up">Time\'s up! The answer was: <strong>{{ flag.country_name }}</strong></p>';
+                
+                // Reload page after a delay to get a new flag
+                setTimeout(function() {
+                    window.location.reload();
+                }, 3000);
+            }
+            
+            // Handle correct answer
+            function handleCorrectAnswer() {
+                if (isAnswered) return;
+                isAnswered = true;
+                
+                clearInterval(timerInterval);
+                guessInput.disabled = true;
+                submitButton.disabled = true;
+                
+                resultMessage.innerHTML = '<p class="correct">Correct! Well done!</p>';
+                
+                // Reload page after a short delay to get a new flag
+                setTimeout(function() {
+                    window.location.reload();
+                }, 1500);
+            }
+            
+            // Handle incorrect answer
+            function handleIncorrectAnswer() {
+                resultMessage.innerHTML = '<p class="incorrect">Incorrect. Try again!</p>';
+            }
+            
             submitButton.addEventListener('click', function() {
+                if (isAnswered) return;
+                
                 const userGuess = guessInput.value.trim().toLowerCase();
                 
                 // Check if guess matches country name or any alias
                 if (aliases.includes(userGuess)) {
-                    resultMessage.innerHTML = '<p class="correct">Correct! Well done!</p>';
-                    // Reload page after a short delay to get a new flag
-                    setTimeout(function() {
-                        window.location.reload();
-                    }, 1500);
+                    handleCorrectAnswer();
                 } else {
-                    resultMessage.innerHTML = '<p class="incorrect">Incorrect. Try again!</p>';
+                    handleIncorrectAnswer();
                 }
             });
             
@@ -72,6 +157,9 @@ s{% extends 'flagd/base.html' %}
                     submitButton.click();
                 }
             });
+            
+            // Start the timer when page loads
+            startTimer();
             {% endif %}
         });
     </script>
