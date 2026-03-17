@@ -11,5 +11,5 @@ class UserAdmin(admin.ModelAdmin):
 
 @admin.register(Flag)
 class FlagAdmin(admin.ModelAdmin):
-    list_display = ('flag_id', 'country_name', 'continent')
+    list_display = ('flag_id', 'country_name', 'country_code', 'continent')
     search_fields = ('country_name',)
