@@ -1,0 +1,62 @@
+{% extends 'flagd/base.html' %}
+{% load staticfiles %}
+
+{% block title_block %}
+    Select Timer - {{ mode_name }} Mode
+{% endblock %}
+
+{% block body_block %}
+    <div class="play-page">
+        <h1>{{ mode_name }} Mode - Choose Your Timer</h1>
+        
+        <div class="back-link">
+            <a href="{% url 'flagd:play' %}">&larr; Back to Mode Selection</a>
+        </div>
+
+        <div class="timer-selection-container">
+            <p class="timer-selection-intro">How many seconds would you like per flag?</p>
+            
+            <div class="timer-options">
+                <a href="{% url 'flagd:play_game' mode=mode %}?timer=10" class="timer-option">
+                    <div class="timer-option-content">
+                        <span class="timer-option-value">10</span>
+                        <span class="timer-option-label">seconds</span>
+                    </div>
+                    <span class="timer-option-difficulty">Hard</span>
+                </a>
+                
+                <a href="{% url 'flagd:play_game' mode=mode %}?timer=20" class="timer-option">
+                    <div class="timer-option-content">
+                        <span class="timer-option-value">20</span>
+                        <span class="timer-option-label">seconds</span>
+                    </div>
+                    <span class="timer-option-difficulty">Medium</span>
+                </a>
+                
+                <a href="{% url 'flagd:play_game' mode=mode %}?timer=30" class="timer-option">
+                    <div class="timer-option-content">
+                        <span class="timer-option-value">30</span>
+                        <span class="timer-option-label">seconds</span>
+                    </div>
+                    <span class="timer-option-difficulty">Easy</span>
+                </a>
+                
+                <a href="{% url 'flagd:play_game' mode=mode %}?timer=45" class="timer-option">
+                    <div class="timer-option-content">
+                        <span class="timer-option-value">45</span>
+                        <span class="timer-option-label">seconds</span>
+                    </div>
+                    <span class="timer-option-difficulty">Relaxed</span>
+                </a>
+                
+                <a href="{% url 'flagd:play_game' mode=mode %}?timer=60" class="timer-option">
+                    <div class="timer-option-content">
+                        <span class="timer-option-value">60</span>
+                        <span class="timer-option-label">seconds</span>
+                    </div>
+                    <span class="timer-option-difficulty">Practice</span>
+                </a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

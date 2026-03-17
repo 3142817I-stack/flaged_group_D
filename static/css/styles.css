@@ -340,6 +340,99 @@ body {
     background-color: rgba(255, 255, 255, 0.3);
 }
 
+/* Timer Selection Styling */
+.timer-selection-container {
+    margin-top: 40px;
+    padding: 40px;
+    background-color: rgba(255, 255, 255, 0.95);
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.timer-selection-intro {
+    font-size: 20px;
+    color: #2c3e50;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.timer-options {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.timer-option {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 25px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 12px;
+    text-decoration: none;
+    color: #2c3e50;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.timer-option:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    border-color: #667eea;
+    background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+}
+
+.timer-option-content {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+}
+
+.timer-option-value {
+    font-size: 36px;
+    font-weight: 700;
+    color: #667eea;
+}
+
+.timer-option-label {
+    font-size: 16px;
+    color: #7f8c8d;
+}
+
+.timer-option-difficulty {
+    font-size: 14px;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 20px;
+    background-color: #667eea;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.timer-option:nth-child(1) .timer-option-difficulty {
+    background-color: #e74c3c;
+}
+
+.timer-option:nth-child(2) .timer-option-difficulty {
+    background-color: #f39c12;
+}
+
+.timer-option:nth-child(3) .timer-option-difficulty {
+    background-color: #27ae60;
+}
+
+.timer-option:nth-child(4) .timer-option-difficulty {
+    background-color: #3498db;
+}
+
+.timer-option:nth-child(5) .timer-option-difficulty {
+    background-color: #9b59b6;
+}
+
 /* Timer Styling */
 .timer-container {
     margin-bottom: 20px;
