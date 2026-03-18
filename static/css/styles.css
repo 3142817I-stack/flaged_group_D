@@ -106,7 +106,6 @@ h1, .main-heading {
 }
 
 .btn {
-    display: block;
     background-color: #14b97d;
     border: none;
     color: white;
@@ -114,8 +113,15 @@ h1, .main-heading {
     text-align: center;
     font-size: 32px;
     border-radius: 12px;
-    align-items: center;
     
+}
+
+.btn-conatiner{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: white;
+    text-align: center;
 }
 
 /* Make the text inside the containers black */
