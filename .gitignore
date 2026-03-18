@@ -10,6 +10,9 @@ __pycache__/
 # Editor/temp files (optional)
 *.swp
 
+# Database
+db.sqlite3
+
 
 
 echo .DS_Store >> .gitignore

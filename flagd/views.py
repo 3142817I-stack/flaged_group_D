@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
@@ -7,6 +7,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import PasswordChangeForm
 from django.db.models import Q
 from django.conf import settings
+from django.views.decorators.http import require_http_methods
+import json
 
 from flagd.models import UserProfile, Flag, CountryAlias
 from flagd.forms import UserForm, UserProfileForm, UserUpdateForm, UserProfileUpdateForm
@@ -201,6 +203,104 @@ def play_game(request, mode):
         }
     
     return render(request, 'flagd/play_game.html', context=context_dict)
+
+
+@require_http_methods(["POST"])
+def save_quiz_result(request):
+    """Save a quiz result to the session via AJAX"""
+    try:
+        data = json.loads(request.body)
+        
+        # Initialize quiz_results in session if not exists
+        if 'quiz_results' not in request.session:
+            request.session['quiz_results'] = []
+        
+        # Add the result to the session
+        result = {
+            'flag_id': data.get('flag_id'),
+            'country_name': data.get('country_name'),
+            'country_code': data.get('country_code'),
+            'is_correct': data.get('is_correct', False),
+            'question_number': data.get('current_question'),
+        }
+        
+        request.session['quiz_results'].append(result)
+        request.session.modified = True
+        
+        return JsonResponse({'status': 'success'})
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+
+
+def play_results(request, mode):
+    """Display quiz results after completing all questions"""
+    from django.db.models import Q
+    
+    # Define mode display names
+    mode_names = {
+        'global': 'Global',
+        'europe': 'Europe',
+        'africa': 'Africa',
+        'asiaoceania': 'Asia Oceania',
+        'americas': 'Americas'
+    }
+    
+    # Get timer and question count from query params
+    timer_duration = request.GET.get('timer', '30')
+    num_questions = request.GET.get('num_questions', '1')
+    
+    # Get quiz results from session
+    quiz_results = request.session.get('quiz_results', [])
+    
+    # Calculate statistics
+    total_questions = len(quiz_results)
+    correct_answers = sum(1 for r in quiz_results if r.get('is_correct'))
+    incorrect_answers = total_questions - correct_answers
+    
+    # Calculate percentage
+    if total_questions > 0:
+        percentage = round((correct_answers / total_questions) * 100, 1)
+    else:
+        percentage = 0
+    
+    # Get list of wrong answers with flag details
+    wrong_answers = []
+    for result in quiz_results:
+        if not result.get('is_correct'):
+            wrong_answers.append({
+                'country_name': result.get('country_name'),
+                'country_code': result.get('country_code'),
+                'flag_id': result.get('flag_id'),
+            })
+    
+    # Update user score if authenticated
+    if request.user.is_authenticated and total_questions > 0:
+        try:
+            profile = request.user.userprofile
+            # Add points based on correct answers (10 points per correct answer)
+            profile.score += correct_answers * 10
+            profile.save()
+        except UserProfile.DoesNotExist:
+            pass
+    
+    # Clear quiz results from session after displaying
+    if 'quiz_results' in request.session:
+        del request.session['quiz_results']
+        request.session.modified = True
+    
+    context_dict = {
+        'mode': mode,
+        'mode_name': mode_names.get(mode, mode.title()),
+        'timer_duration': timer_duration,
+        'num_questions': num_questions,
+        'total_questions': total_questions,
+        'correct_answers': correct_answers,
+        'incorrect_answers': incorrect_answers,
+        'percentage': percentage,
+        'wrong_answers': wrong_answers,
+    }
+    
+    return render(request, 'flagd/play_results.html', context=context_dict)
 
 
 #all the catalogue views
