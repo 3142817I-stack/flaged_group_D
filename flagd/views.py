@@ -11,7 +11,7 @@ from django.views.decorators.http import require_http_methods
 import json
 
 from flagd.models import UserProfile, Flag, CountryAlias
-from flagd.forms import UserForm, UserProfileForm, UserUpdateForm, UserProfileUpdateForm
+from flagd.forms import * #UserForm, UserProfileForm, UserUpdateForm, UserProfileUpdateForm
 
 import random
 
@@ -160,6 +160,10 @@ def play_game(request, mode):
     if current_question == 1:
         request.session['shown_flags'] = []
         shown_flags = []
+        # Also clear quiz results when starting a new game
+        if 'quiz_results' in request.session:
+            del request.session['quiz_results']
+            request.session.modified = True
     else:
         shown_flags = request.session.get('shown_flags', [])
     
@@ -283,11 +287,6 @@ def play_results(request, mode):
         except UserProfile.DoesNotExist:
             pass
     
-    # Clear quiz results from session after displaying
-    if 'quiz_results' in request.session:
-        del request.session['quiz_results']
-        request.session.modified = True
-    
     context_dict = {
         'mode': mode,
         'mode_name': mode_names.get(mode, mode.title()),
@@ -336,9 +335,13 @@ def flag_detail(request, flag_id):
     flag = get_object_or_404(Flag, flag_id=flag_id)
     aliases = flag.aliases.all().order_by('alias_name')
 
+    # Get the 'next' parameter to determine where to go back to
+    next_url = request.GET.get('next', None)
+
     context_dict = {
         'flag': flag,
         'aliases': aliases,
+        'next_url': next_url,
     }
     return render(request, 'flagd/flag_detail.html', context=context_dict)
 
@@ -427,6 +430,7 @@ def user_settings(request):
     user_form = UserUpdateForm(instance=request.user)
     profile_form = UserProfileUpdateForm(instance=request.user.userprofile)
     password_form = PasswordChangeForm(user=request.user)
+    delete_form = DeleteAccountForm(user=request.user)
 
     success_message = None
 
@@ -439,6 +443,7 @@ def user_settings(request):
                 instance=request.user.userprofile
             )
             password_form = PasswordChangeForm(user=request.user)
+            delete_form = DeleteAccountForm(user=request.user)
 
             if user_form.is_valid() and profile_form.is_valid():
                 user_form.save()
@@ -449,15 +454,28 @@ def user_settings(request):
             user_form = UserUpdateForm(instance=request.user)
             profile_form = UserProfileUpdateForm(instance=request.user.userprofile)
             password_form = PasswordChangeForm(user=request.user, data=request.POST)
+            delete_form = DeleteAccountForm(user=request.user)
 
             if password_form.is_valid():
                 user = password_form.save()
                 update_session_auth_hash(request, user)
                 success_message = "Password changed successfully."
 
+        elif 'delete_account' in request.POST:
+            user_form = UserUpdateForm(instance=request.user)
+            profile_form = UserProfileUpdateForm(instance=request.user.userprofile)
+            password_form = PasswordChangeForm(user=request.user)
+            delete_form = DeleteAccountForm(user=request.user, data=request.POST)
+
+            if delete_form.is_valid():
+                user = request.user
+                logout(request)
+                user.delete()
+                return redirect('flagd:index')
+
     return render(
         request,'flagd/user_settings.html', 
-        {'user_form': user_form, 'profile_form': profile_form, 'password_form': password_form, 'success_message': success_message,}
+        {'user_form': user_form, 'profile_form': profile_form, 'password_form': password_form, 'delete_form': delete_form, 'success_message': success_message,}
     )
 
 

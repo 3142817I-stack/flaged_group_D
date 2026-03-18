@@ -762,12 +762,13 @@ h1, .main-heading {
 }
 
 .flag-container {
-    margin: 20px 0;
+    margin: 20px auto;
     padding: 20px;
     background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%);
     border-radius: 16px;
-    display: inline-block;
+    display: block;
     border: 1px solid #e9ecef;
+    text-align: center;
 }
 
 .flag-image {
@@ -824,6 +825,39 @@ h1, .main-heading {
     transform: none;
 }
 
+/* Skip Button Styling */
+.skip-btn {
+    background: transparent;
+    color: #667eea;
+    border: 2px solid #667eea;
+    padding: 14px 28px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.skip-btn:hover {
+    background: rgba(102, 126, 234, 0.1);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+}
+
+.skip-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Skipped Message Styling */
+.skipped {
+    color: #f39c12;
+    font-weight: 600;
+    font-size: 18px;
+    margin-top: 16px;
+}
+
 /* Result Messages */
 #result-message {
     margin-top: 24px;
@@ -867,4 +901,167 @@ h1, .main-heading {
     color: #666;
     font-size: 18px;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+
+
+/* Settings Page */
+.settings-page {
+    padding: 40px 20px;
+}
+
+.settings-container {
+    width: 100%;
+    max-width: 760px;
+    margin: 0 auto;
+}
+
+.settings-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.settings-header h1 {
+    font-size: 40px;
+    margin-bottom: 10px;
+    color: #fff;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25);
+}
+
+.settings-header p {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 16px;
+}
+
+.settings-message {
+    margin-bottom: 20px;
+    padding: 14px 18px;
+    border-radius: 12px;
+    font-weight: 600;
+}
+
+.success-message {
+    background-color: rgba(39, 174, 96, 0.15);
+    color: #1e8449;
+    border: 1px solid rgba(39, 174, 96, 0.35);
+    backdrop-filter: blur(4px);
+}
+
+.settings-card {
+    background-color: rgba(255, 255, 255, 0.85);
+    border-radius: 18px;
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.18);
+    padding: 28px;
+    margin-bottom: 24px;
+}
+
+.settings-card h2 {
+    color: #2c3e50;
+    margin-bottom: 18px;
+    font-size: 24px;
+}
+
+.settings-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="password"],
+.form-group input[type="file"] {
+    padding: 12px 14px;
+    border: 2px solid #e5e7eb;
+    border-radius: 10px;
+    font-size: 15px;
+    background-color: #fff;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="email"]:focus,
+.form-group input[type="password"]:focus,
+.form-group input[type="file"]:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+}
+
+.errorlist {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    color: #c0392b;
+    font-size: 14px;
+}
+
+.btn-primary,
+.btn-secondary,
+.btn-danger {
+    display: inline-block;
+    padding: 12px 20px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 15px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.35);
+}
+
+.btn-secondary {
+    background-color: rgba(255, 255, 255, 0.85);
+    color: #2c3e50;
+    border: 1px solid #d5dbe3;
+}
+
+.btn-secondary:hover {
+    background-color: #fff;
+}
+
+.danger-card {
+    border: 2px solid rgba(231, 76, 60, 0.25);
+}
+
+.danger-text {
+    color: #922b21;
+    margin-bottom: 16px;
+    line-height: 1.5;
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    color: white;
+}
+
+.btn-danger:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(231, 76, 60, 0.3);
+}
+
+.settings-actions {
+    margin-top: 10px;
+    text-align: center;
 }
