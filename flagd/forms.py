@@ -1,8 +1,10 @@
 from django import forms
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
+from django.contrib.auth.forms import UserCreationForm
 from django.core.validators import RegexValidator
+from django.contrib.auth import authenticate
 from flagd.models import UserProfile
+
 
 class UserForm(UserCreationForm):
     email = forms.EmailField(required=True)
@@ -49,3 +51,31 @@ class UserProfileUpdateForm(forms.ModelForm):
     class Meta:
         model = UserProfile
         fields = ('picture',)
+
+
+class DeleteAccountForm(forms.Form):
+    password = forms.CharField(
+        label="Confirm your password",
+        widget=forms.PasswordInput(attrs={'placeholder': 'Enter your password'})
+    )
+    confirm_text = forms.CharField(
+        label='Type DELETE to confirm',
+        widget=forms.TextInput(attrs={'placeholder': 'Type DELETE'})
+    )
+
+    def __init__(self, user, *args, **kwargs):
+        self.user = user
+        super().__init__(*args, **kwargs)
+
+    def clean_password(self):
+        password = self.cleaned_data.get('password')
+        user = authenticate(username=self.user.username, password=password)
+        if user is None:
+            raise forms.ValidationError("Incorrect password.")
+        return password
+
+    def clean_confirm_text(self):
+        confirm_text = self.cleaned_data.get('confirm_text')
+        if confirm_text != 'DELETE':
+            raise forms.ValidationError('You must type DELETE exactly.')
+        return confirm_text

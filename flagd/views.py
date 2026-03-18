@@ -11,7 +11,7 @@ from django.views.decorators.http import require_http_methods
 import json
 
 from flagd.models import UserProfile, Flag, CountryAlias
-from flagd.forms import UserForm, UserProfileForm, UserUpdateForm, UserProfileUpdateForm
+from flagd.forms import * #UserForm, UserProfileForm, UserUpdateForm, UserProfileUpdateForm
 
 import random
 
@@ -430,6 +430,7 @@ def user_settings(request):
     user_form = UserUpdateForm(instance=request.user)
     profile_form = UserProfileUpdateForm(instance=request.user.userprofile)
     password_form = PasswordChangeForm(user=request.user)
+    delete_form = DeleteAccountForm(user=request.user)
 
     success_message = None
 
@@ -442,6 +443,7 @@ def user_settings(request):
                 instance=request.user.userprofile
             )
             password_form = PasswordChangeForm(user=request.user)
+            delete_form = DeleteAccountForm(user=request.user)
 
             if user_form.is_valid() and profile_form.is_valid():
                 user_form.save()
@@ -452,15 +454,28 @@ def user_settings(request):
             user_form = UserUpdateForm(instance=request.user)
             profile_form = UserProfileUpdateForm(instance=request.user.userprofile)
             password_form = PasswordChangeForm(user=request.user, data=request.POST)
+            delete_form = DeleteAccountForm(user=request.user)
 
             if password_form.is_valid():
                 user = password_form.save()
                 update_session_auth_hash(request, user)
                 success_message = "Password changed successfully."
 
+        elif 'delete_account' in request.POST:
+            user_form = UserUpdateForm(instance=request.user)
+            profile_form = UserProfileUpdateForm(instance=request.user.userprofile)
+            password_form = PasswordChangeForm(user=request.user)
+            delete_form = DeleteAccountForm(user=request.user, data=request.POST)
+
+            if delete_form.is_valid():
+                user = request.user
+                logout(request)
+                user.delete()
+                return redirect('flagd:index')
+
     return render(
         request,'flagd/user_settings.html', 
-        {'user_form': user_form, 'profile_form': profile_form, 'password_form': password_form, 'success_message': success_message,}
+        {'user_form': user_form, 'profile_form': profile_form, 'password_form': password_form, 'delete_form': delete_form, 'success_message': success_message,}
     )
 
 
