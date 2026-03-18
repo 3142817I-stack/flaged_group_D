@@ -1065,3 +1065,125 @@ h1, .main-heading {
     margin-top: 10px;
     text-align: center;
 }
+
+
+
+/* Profile Page */
+.profile-page {
+    display: flex;
+    justify-content: center;
+    padding: 50px 20px;
+}
+
+.profile-card {
+    width: 100%;
+    max-width: 700px;
+    background-color: rgba(255, 255, 255, 0.85);
+    border-radius: 20px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+    padding: 30px;
+}
+
+/* Header */
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    margin-bottom: 30px;
+}
+
+.profile-avatar img {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #667eea;
+}
+
+/* Info */
+.profile-main-info h1 {
+    font-size: 32px;
+    color: #2c3e50;
+}
+
+.profile-email {
+    color: #7f8c8d;
+    margin-top: 5px;
+}
+
+.profile-joined {
+    font-size: 14px;
+    color: #95a5a6;
+    margin-top: 5px;
+}
+
+/* Sections */
+.profile-section {
+    margin-top: 25px;
+}
+
+.profile-section h2 {
+    margin-bottom: 15px;
+    color: #2c3e50;
+}
+
+/* Stats */
+.profile-stats-grid {
+    display: flex;
+    gap: 20px;
+}
+
+.stat-card {
+    flex: 1;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 14px;
+    padding: 20px;
+    text-align: center;
+}
+
+.stat-value {
+    font-size: 32px;
+    font-weight: bold;
+    display: block;
+}
+
+.stat-label {
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+/* Actions */
+.profile-actions {
+    margin-top: 30px;
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+/* Buttons reuse */
+.btn-primary {
+    padding: 12px 20px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.btn-primary:hover {
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+}
+
+.btn-danger {
+    padding: 12px 20px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.btn-danger:hover {
+    box-shadow: 0 8px 20px rgba(231, 76, 60, 0.4);
+}
