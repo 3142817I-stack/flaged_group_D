@@ -95,7 +95,7 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator', 'Options': {'min_length': 8,}
     },
     {
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
@@ -140,8 +140,20 @@ MEDIA_ROOT = MEDIA_DIR
 MEDIA_URL = '/media/'
 
 # login mappings
-LOGIN_URL = 'flagd:login'
+LOGIN_URL = '/flagd/account/'
 
 # login lengths and types
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 SESSION_COOKIE_AGE = 1209600 
+
+
+
+#default pfp options
+DEFAULT_PFPS = [
+    'profile_pics/default_pfps/aura_debt.jpg',
+    'profile_pics/default_pfps/dextuh.jpg',
+    'profile_pics/default_pfps/doakes.jpg',
+    'profile_pics/default_pfps/nepal_nom.jpg',
+    'profile_pics/default_pfps/the_gar.jpg',
+    'profile_pics/default_pfps/tyler.jpg',
+]

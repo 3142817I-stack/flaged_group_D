@@ -2,10 +2,78 @@
 {% load staticfiles %}
 
 {% block title_block %}
-    Settings
+    Account Settings
 {% endblock %}
 
-
 {% block body_block %}
-<h1>User Settings!</h1>
+<div class="profile-container">
+    <h1>Account Settings</h1>
+
+    {% if success_message %}
+        <p style="color: green;"><strong>{{ success_message }}</strong></p>
+    {% endif %}
+
+    <div class="profile-stats">
+        <h2>Update Profile</h2>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            {{ user_form.non_field_errors }}
+            {{ profile_form.non_field_errors }}
+
+            <p>
+                {{ user_form.username.label_tag }}
+                {{ user_form.username }}
+                {{ user_form.username.errors }}
+            </p>
+
+            <p>
+                {{ user_form.email.label_tag }}
+                {{ user_form.email }}
+                {{ user_form.email.errors }}
+            </p>
+
+            <p>
+                {{ profile_form.picture.label_tag }}
+                {{ profile_form.picture }}
+                {{ profile_form.picture.errors }}
+            </p>
+
+            <button type="submit" name="update_profile">Save Profile Changes</button>
+        </form>
+    </div>
+
+    <div class="profile-stats">
+        <h2>Change Password</h2>
+        <form method="post">
+            {% csrf_token %}
+
+            {{ password_form.non_field_errors }}
+
+            <p>
+                {{ password_form.old_password.label_tag }}
+                {{ password_form.old_password }}
+                {{ password_form.old_password.errors }}
+            </p>
+
+            <p>
+                {{ password_form.new_password1.label_tag }}
+                {{ password_form.new_password1 }}
+                {{ password_form.new_password1.errors }}
+            </p>
+
+            <p>
+                {{ password_form.new_password2.label_tag }}
+                {{ password_form.new_password2 }}
+                {{ password_form.new_password2.errors }}
+            </p>
+
+            <button type="submit" name="change_password">Change Password</button>
+        </form>
+    </div>
+
+    <div class="profile-actions" style="margin-top: 30px;">
+        <a href="{% url 'flagd:user_profile' user.username %}" class="btn">Back to Profile</a>
+    </div>
+</div>
 {% endblock %}

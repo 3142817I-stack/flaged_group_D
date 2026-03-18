@@ -8,9 +8,13 @@
 {% block body_block %}
 <h1>Login</h1>
 
+{% if error_message %}
+    <p style="color: red;">{{ error_message }}</p>
+{% endif %}
+
 <form id="login_form" method="post" action="{% url 'flagd:account' %}">
     {% csrf_token %}
-    Username: <input type="text" name="username" value="" size="50" />
+    Username: <input type="text" name="username" value="{{ request.POST.username }}" size="50" />
     <br />
     Password: <input type="password" name="password" value="" size="50" />
     <br />
