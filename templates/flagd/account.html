@@ -6,32 +6,60 @@
 {% endblock %}
 
 {% block body_block %}
-<h1>Login</h1>
+<div class="settings-page">
+    <div class="settings-container">
+        <div class="settings-header">
+            <h1>Login</h1>
+            <p>Access your account, create a new one, or continue as a guest.</p>
+        </div>
 
-{% if error_message %}
-    <p style="color: red;">{{ error_message }}</p>
-{% endif %}
+        {% if error_message %}
+            <div class="settings-message" style="background-color: rgba(231, 76, 60, 0.15); color: #922b21; border: 1px solid rgba(231, 76, 60, 0.35); backdrop-filter: blur(4px);">
+                {{ error_message }}
+            </div>
+        {% endif %}
 
-<form id="login_form" method="post" action="{% url 'flagd:account' %}">
-    {% csrf_token %}
-    Username: <input type="text" name="username" value="{{ request.POST.username }}" size="50" />
-    <br />
-    Password: <input type="password" name="password" value="" size="50" />
-    <br />
-    <input type="submit" value="submit" />
-</form>
+        <div class="settings-card">
+            <h2>Sign In</h2>
 
+            <form id="login_form" method="post" action="{% url 'flagd:account' %}" class="settings-form">
+                {% csrf_token %}
 
+                <div class="form-group">
+                    <label for="id_username">Username</label>
+                    <input
+                        type="text"
+                        id="id_username"
+                        name="username"
+                        value="{{ request.POST.username }}"
+                    />
+                </div>
 
-<div>
-    <h1>Don't have an account?</h1>
-    <h2>Sign Up</h2>
-    <a href="{% url 'flagd:sign_up' %}">Sign Up Button</a>
-</div>
+                <div class="form-group">
+                    <label for="id_password">Password</label>
+                    <input
+                        type="password"
+                        id="id_password"
+                        name="password"
+                        value=""
+                    />
+                </div>
 
-<div>
-    <h2>Or Continue as Guest</h2>
-    <a href="{% url 'flagd:play' %}">Contiue as Guest</a>
+                <button type="submit" class="btn-primary">Login</button>
+            </form>
+        </div>
+
+        <div class="settings-card">
+            <h2>Don't have an account?</h2>
+            <p>Create an account to save your progress and personalize your profile.</p>
+            <a href="{% url 'flagd:sign_up' %}" class="btn-primary">Sign Up</a>
+        </div>
+
+        <div class="settings-card">
+            <h2>Continue as Guest</h2>
+            <p>Jump straight into the game without creating an account.</p>
+            <a href="{% url 'flagd:play' %}" class="btn-secondary">Continue as Guest</a>
+        </div>
+    </div>
 </div>
 {% endblock %}
-
