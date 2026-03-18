@@ -742,12 +742,13 @@ h1, .main-heading {
 }
 
 .flag-container {
-    margin: 20px 0;
+    margin: 20px auto;
     padding: 20px;
     background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%);
     border-radius: 16px;
-    display: inline-block;
+    display: block;
     border: 1px solid #e9ecef;
+    text-align: center;
 }
 
 .flag-image {
