@@ -15,27 +15,44 @@
 
 <body>
     <div class="bg"></div>
-<nav class="navbar">
-    <div class="navbar-brand">
-        <a href="{% url 'flagd:index' %}">FlagD</a>
-    </div>
-    <ul class="navbar-menu">
-        <li><a href="{% url 'flagd:play' %}">Play</a></li>
-        <li><a href="{% url 'flagd:leaderboard' %}">Leaderboard</a></li>
-        <li><a href="{% url 'flagd:catalogue' %}">Catalogue</a></li>
-        <li><a href="{% url 'flagd:about' %}">About</a></li>
-        <li><a href="{% url 'flagd:account' %}">Login/Sign Up</a></li>
-    </ul>
-</nav>
 
-<div>
-    {% block body_block %}
-    {% endblock %}
-</div>
-<div>
-    {% block footer_block %}
-        Copyright 2026 FlagD. All rights reserved.
-    {% endblock %}
-</div>
+    {% if user.is_authenticated %}
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <a href="{% url 'flagd:index' %}">FlagD</a>
+        </div>
+        <ul class="navbar-menu">
+            <li><a href="{% url 'flagd:play' %}">Play</a></li>
+            <li><a href="{% url 'flagd:leaderboard' %}">Leaderboard</a></li>
+            <li><a href="{% url 'flagd:catalogue' %}">Catalogue</a></li>
+            <li><a href="{% url 'flagd:about' %}">About</a></li>
+            <li><a href="{% url 'flagd:user_profile' user.username %}">Profile</a></li>
+        </ul>
+    </nav>
+    
+    {% else %}
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <a href="{% url 'flagd:index' %}">FlagD</a>
+        </div>
+        <ul class="navbar-menu">
+            <li><a href="{% url 'flagd:play' %}">Play</a></li>
+            <li><a href="{% url 'flagd:leaderboard' %}">Leaderboard</a></li>
+            <li><a href="{% url 'flagd:catalogue' %}">Catalogue</a></li>
+            <li><a href="{% url 'flagd:about' %}">About</a></li>
+            <li><a href="{% url 'flagd:account' %}">Login/Sign Up</a></li>
+        </ul>
+    </nav>
+    {% endif %}
+
+    <div>
+        {% block body_block %}
+        {% endblock %}
+    </div>
+    <div>
+        {% block footer_block %}
+            Copyright 2026 FlagD. All rights reserved.
+        {% endblock %}
+    </div>
 </body>
 </html>
