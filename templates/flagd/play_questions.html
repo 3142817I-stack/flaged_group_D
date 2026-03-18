@@ -1,0 +1,57 @@
+{% extends 'flagd/base.html' %}
+{% load staticfiles %}
+
+{% block title_block %}
+    Select Questions - {{ mode_name }} Mode
+{% endblock %}
+
+{% block body_block %}
+    <div class="timer-selection-page">
+        <div class="timer-selection-header">
+            <h1>{{ mode_name }} Mode</h1>
+            <p>Choose how many questions you want</p>
+        </div>
+        
+        <div class="back-link">
+            <a href="{% url 'flagd:play_timer' mode=mode %}?timer={{ timer_duration }}">&larr; Back to Timer Selection</a>
+        </div>
+
+        <div class="timer-selection-container">
+            <div class="timer-options">
+                {% for count in question_options %}
+                <a href="{% url 'flagd:play_game' mode=mode %}?timer={{ timer_duration }}&num_questions={{ count }}&current_question=1" class="timer-option {% if count == total_flags %}timer-option-recommended{% endif %}">
+                    {% if count == total_flags %}
+                    <div class="timer-option-badge">All Flags</div>
+                    {% endif %}
+                    <div class="timer-option-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                        </svg>
+                    </div>
+                    <div class="timer-option-content">
+                        <span class="timer-option-value">{{ count }}</span>
+                        <span class="timer-option-label">questions</span>
+                    </div>
+                    {% if count == 5 %}
+                    <span class="timer-option-difficulty difficulty-hard">Quick</span>
+                    {% elif count == 10 %}
+                    <span class="timer-option-difficulty difficulty-medium">Standard</span>
+                    {% elif count == 15 %}
+                    <span class="timer-option-difficulty difficulty-easy">Extended</span>
+                    {% elif count == 20 %}
+                    <span class="timer-option-difficulty difficulty-relaxed">Marathon</span>
+                    {% else %}
+                    <span class="timer-option-difficulty difficulty-practice">Complete</span>
+                    {% endif %}
+                </a>
+                {% endfor %}
+            </div>
+            
+            <div class="questions-info">
+                <p>Total flags available: <strong>{{ total_flags }}</strong></p>
+            </div>
+        </div>
+    </div>
+{% endblock %}
