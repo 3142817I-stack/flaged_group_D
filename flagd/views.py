@@ -17,9 +17,9 @@ import random
 
 def index(request):
     context_dict = {}
-
-    #visitor_cookie_handler(request)
-
+    from django.contrib.auth.models import User
+    top_users = User.objects.order_by('-userprofile__score')[:3] 
+    context_dict = {'top_users': top_users}
     return render(request, 'flagd/index.html', context=context_dict)
 
 
@@ -29,8 +29,8 @@ def about(request):
 
 
 def leaderboard(request):
-    from django.contrib.auth.models import User #experiment - is this line needed?
-    users = User.objects.all().order_by('-userprofile__score') #removed 1 _
+    from django.contrib.auth.models import User
+    users = User.objects.all().order_by('-userprofile__score')
     context_dict = {'users': users}
     return render(request, 'flagd/leaderboard.html', context=context_dict)
 

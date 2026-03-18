@@ -6,14 +6,15 @@
 {% endblock %}
 
 {% block body_block %}
-    <p>is it working? </p>
+    <div class ="btn-conatiner">
 
     <h1> Welcome to FLAGD! </h1>
     <br></br>
     <h2>Learn world Flags and compete for top scores!</h2>
     <a href="{% url 'flagd:about' %}">Learn More -></a>
     <br></br>
-    <button type="Play" onclick="window.location.href='{% url 'flagd:play' %}'">Play</button>
+    <button type="Play" class="btn" onclick="window.location.href='{% url 'flagd:play' %}'">Play</button>
+    </div>
 
     <div class="miniboard-container">
         <div class="leaderboard-header">
@@ -28,11 +29,19 @@
                 </tr>
             </thead>
             <tbody>
-                {% for user in users|slice:":3" %}
+                {% for user in top_users %}
                 <tr>
-                    <td>{{ forloop.counter }}</td>
+                    <td>
+                        {% if forloop.counter == 1 %}
+                            <span class="rank-badge rank-1">1</span>
+                        {% elif forloop.counter == 2 %}
+                            <span class="rank-badge rank-2">2</span>
+                        {% elif forloop.counter == 3 %}
+                            <span class="rank-badge rank-3">3</span>
+                        {% endif %}
+                    </td>
                     <td>{{ user.username }}</td>
-                    <td>{{ user.score }}</td>
+                    <td>{{ user.userprofile.score }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
