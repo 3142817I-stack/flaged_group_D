@@ -7,18 +7,43 @@
 
 
 {% block body_block %}
-<h1>Sign Up</h1>
-{% if registered %}
-Thanks for signing up!
-<a href="{% url 'flagd:user_profile' user.username %}">Go to profile page</a><br />
+    <h1>Sign Up</h1>
 
-{% else %}
-<form id="user_form" method="post" action="{% url 'flagd:sign_up' %}" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ user_form.as_p }}
-    {{ profile_form.as_p }}
+    <form id="user_form" method="post" action="{% url 'flagd:sign_up' %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ user_form.non_field_errors }}
+        {{ profile_form.non_field_errors }}
 
-    <input type="submit" name="submit" value="Sign Up" />
-</form>
-{% endif %}
+        <p>
+            {{ user_form.username.label_tag }}
+            {{ user_form.username }}
+            {{ user_form.username.errors }}
+        </p>
+
+        <p>
+            {{ user_form.email.label_tag }}
+            {{ user_form.email }}
+            {{ user_form.email.errors }}
+        </p>
+
+        <p>
+            {{ user_form.password1.label_tag }}
+            {{ user_form.password1 }}
+            {{ user_form.password1.errors }}
+        </p>
+
+        <p>
+            {{ user_form.password2.label_tag }}
+            {{ user_form.password2 }}
+            {{ user_form.password2.errors }}
+        </p>
+
+        <p>
+            {{ profile_form.picture.label_tag }}
+            {{ profile_form.picture }}
+            {{ profile_form.picture.errors }}
+        </p>
+
+        <input type="submit" name="submit" value="Sign Up" />
+    </form>
 {% endblock %}

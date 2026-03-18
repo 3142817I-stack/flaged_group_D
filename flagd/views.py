@@ -1,11 +1,16 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.urls import reverse
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
-from flagd.models import UserProfile
-from flagd.forms import UserForm, UserProfileForm #CategoryForm, PageForm, 
 from django.contrib.auth.models import User
+from django.contrib.auth.forms import PasswordChangeForm
+from django.db.models import Q
+from django.conf import settings
+
+from flagd.models import UserProfile, Flag, CountryAlias
+from flagd.forms import UserForm, UserProfileForm, UserUpdateForm, UserProfileUpdateForm
+
 import random
 
 def index(request):
@@ -15,9 +20,11 @@ def index(request):
 
     return render(request, 'flagd/index.html', context=context_dict)
 
+
 def about(request):
     context_dict = {}
     return render(request, 'flagd/about.html', context=context_dict)
+
 
 def leaderboard(request):
     from django.contrib.auth.models import User #experiment - is this line needed?
@@ -25,10 +32,13 @@ def leaderboard(request):
     context_dict = {'users': users}
     return render(request, 'flagd/leaderboard.html', context=context_dict)
 
+
+#all the play views
 def play(request):
     # Show game mode selection only
     context_dict = {}
     return render(request, 'flagd/play.html', context=context_dict)
+
 
 def play_timer(request, mode):
     # Show timer selection screen
@@ -45,6 +55,7 @@ def play_timer(request, mode):
         'mode_name': mode_names.get(mode, mode.title())
     }
     return render(request, 'flagd/play_timer.html', context=context_dict)
+
 
 def play_questions(request, mode):
     """Show question count selection screen"""
@@ -97,6 +108,7 @@ def play_questions(request, mode):
         'question_options': question_options
     }
     return render(request, 'flagd/play_questions.html', context=context_dict)
+
 
 def play_game(request, mode):
     from flagd.models import Flag, CountryAlias
@@ -191,10 +203,54 @@ def play_game(request, mode):
     return render(request, 'flagd/play_game.html', context=context_dict)
 
 
-#all the account stuff
+#all the catalogue views
+def catalogue(request):
+    query = request.GET.get('q', '').strip()
 
-#user_login equivalent
+    flags = Flag.objects.all().order_by('country_name')
+
+    if query:
+        flags = Flag.objects.filter(
+            Q(country_name__icontains=query) |
+            Q(aliases__alias_name__icontains=query)
+        ).distinct().order_by('country_name')
+
+        # If there is exactly one result and it exactly matches a country or alias,
+        # send the user straight to the detail page.
+        exact_match = Flag.objects.filter(
+            Q(country_name__iexact=query) |
+            Q(aliases__alias_name__iexact=query)
+        ).distinct()
+
+        if exact_match.count() == 1:
+            return redirect('flagd:flag_detail', flag_id=exact_match.first().flag_id)
+
+    context_dict = {
+        'flags': flags,
+        'query': query,
+    }
+    return render(request, 'flagd/catalogue.html', context=context_dict)
+
+
+def flag_detail(request, flag_id):
+    flag = get_object_or_404(Flag, flag_id=flag_id)
+    aliases = flag.aliases.all().order_by('alias_name')
+
+    context_dict = {
+        'flag': flag,
+        'aliases': aliases,
+    }
+    return render(request, 'flagd/flag_detail.html', context=context_dict)
+
+
+#all the account views
 def account(request):
+    #if user signed in already, redirect
+    if request.user.is_authenticated:
+        return redirect('flagd:user_profile', profile_name_slug=request.user.username)
+
+    error_message = None
+
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -204,20 +260,19 @@ def account(request):
         if user:
             if user.is_active:
                 login(request, user)
-                return redirect(reverse('flagd:index'))
+                return redirect('flagd:user_profile', profile_name_slug=user.username)
             else:
-                return HttpResponse("Your Flag-D account is disabled.")
+                error_message = "Your account is disabled."
         else:
-            print(f"Invalid login details: {username}, {password}")
-            return HttpResponse("Invalid login details supplied.")
-    else:
-        return render(request, 'flagd/account.html')
+            error_message = "Invalid username or password."
+
+    return render(request, 'flagd/account.html', {'error_message': error_message})
 
 
-#register equivalent
 def sign_up(request):
-    registered = False
-    created_user = None
+    #also if user already signed up, redirect to profile
+    if request.user.is_authenticated:
+        return redirect('flagd:user_profile', profile_name_slug=request.user.username)
 
     if request.method == 'POST':
         user_form = UserForm(request.POST)
@@ -225,18 +280,20 @@ def sign_up(request):
 
         if user_form.is_valid() and profile_form.is_valid():
             user = user_form.save()
-            user.set_password(user.password)
-            user.save()
 
             profile = profile_form.save(commit=False)
             profile.user = user
 
             if 'picture' in request.FILES:
                 profile.picture = request.FILES['picture']
-            
+            else:
+                profile.picture = random.choice(settings.DEFAULT_PFPS)
+
             profile.save()
-            registered = True
-            created_user=user
+            login(request, user)  # login after signup completed
+
+            # go straight to profile page
+            return redirect('flagd:user_profile', profile_name_slug=user.username)
 
         else:
             print(user_form.errors, profile_form.errors)
@@ -244,8 +301,8 @@ def sign_up(request):
     else:
         user_form = UserForm()
         profile_form = UserProfileForm()
-    
-    return render(request, 'flagd/sign_up.html', context={'user_form': user_form, 'profile_form': profile_form, 'registered': registered, 'user': created_user})
+
+    return render(request, 'flagd/sign_up.html',{'user_form': user_form,'profile_form': profile_form,})
 
 
 @login_required
@@ -264,9 +321,45 @@ def user_profile(request, profile_name_slug):
     }
     return render(request, 'flagd/user_profile.html', context=context_dict)
 
+
 @login_required
 def user_settings(request):
-    return render(request, 'flagd/user_settings.html')
+    user_form = UserUpdateForm(instance=request.user)
+    profile_form = UserProfileUpdateForm(instance=request.user.userprofile)
+    password_form = PasswordChangeForm(user=request.user)
+
+    success_message = None
+
+    if request.method == 'POST':
+        if 'update_profile' in request.POST:
+            user_form = UserUpdateForm(request.POST, instance=request.user)
+            profile_form = UserProfileUpdateForm(
+                request.POST,
+                request.FILES,
+                instance=request.user.userprofile
+            )
+            password_form = PasswordChangeForm(user=request.user)
+
+            if user_form.is_valid() and profile_form.is_valid():
+                user_form.save()
+                profile_form.save()
+                success_message = "Profile updated successfully."
+
+        elif 'change_password' in request.POST:
+            user_form = UserUpdateForm(instance=request.user)
+            profile_form = UserProfileUpdateForm(instance=request.user.userprofile)
+            password_form = PasswordChangeForm(user=request.user, data=request.POST)
+
+            if password_form.is_valid():
+                user = password_form.save()
+                update_session_auth_hash(request, user)
+                success_message = "Password changed successfully."
+
+    return render(
+        request,'flagd/user_settings.html', 
+        {'user_form': user_form, 'profile_form': profile_form, 'password_form': password_form, 'success_message': success_message,}
+    )
+
 
 @login_required
 def user_logout(request):

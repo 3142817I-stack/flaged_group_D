@@ -2,10 +2,28 @@
 {% load staticfiles %}
 
 {% block title_block %}
-    Profile
+    {{ profile.user.username }}'s Profile
 {% endblock %}
 
 
 {% block body_block %}
 <h1>User Profile!</h1>
+<img src="{{ profile.picture.url }}" alt="Profile picture">
+
+
+<div class="profile-info">
+    <h1>{{ profile.user.username }}</h1>
+    <p><strong>Email:</strong> {{ profile.user.email }}</p>
+    <p><strong>Date Joined:</strong> {{ profile.user.date_joined|date:"F j, Y" }}</p>
+</div>
+
+<div class="profile-stats">
+    <h2>Stats</h2>
+    <p><strong>Top Score:</strong> {{ profile.score }}</p>
+</div>
+
+<div class="profile-actions">
+    <a href="{% url 'flagd:user_settings' %}" class="btn">Account Settings</a>
+    <a href="{% url 'flagd:logout' %}" class="btn">Logout</a>
+</div>
 {% endblock %}

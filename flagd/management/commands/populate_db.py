@@ -1,7 +1,9 @@
 from django.core.management.base import BaseCommand
 from django.db import connection
+from django.conf import settings
 from django.contrib.auth.models import User
 from flagd.models import UserProfile, Flag, CountryAlias
+import random
 
 
 class Command(BaseCommand):
@@ -73,7 +75,8 @@ class Command(BaseCommand):
 
             UserProfile.objects.create(
                 user=user,
-                score=user_data['score']
+                score=user_data['score'],
+                picture=random.choice(settings.DEFAULT_PFPS)
             )
         
         self.stdout.write(f'Created {len(users_data)} dummy users.')
