@@ -90,6 +90,19 @@ h1, .main-heading {
   color: white;
 }
 
+.btn {
+    display: block;
+    background-color: #14b97d;
+    border: none;
+    color: white;
+    padding: 40px 80px;
+    text-align: center;
+    font-size: 32px;
+    border-radius: 12px;
+    align-items: center;
+    
+}
+
 /* Make the text inside the containers black */
 .container p,
 .container h2,
@@ -126,6 +139,7 @@ h1, .main-heading {
     color: #fff;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
     margin-bottom: 10px;
+    
 }
 
 .game-header p {
