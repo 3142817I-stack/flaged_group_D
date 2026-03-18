@@ -113,6 +113,53 @@
                 }, 1000);
             }
             
+            // Save result to session via AJAX
+            function saveResult(isCorrect) {
+                const data = {
+                    flag_id: {{ flag.flag_id }},
+                    country_name: "{{ flag.country_name }}",
+                    country_code: "{{ flag.country_code }}",
+                    is_correct: isCorrect,
+                    current_question: {{ current_question }},
+                    num_questions: {{ num_questions }},
+                    mode: "{{ mode }}"
+                };
+                
+                fetch("{% url 'flagd:save_quiz_result' %}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify(data)
+                }).catch(error => console.error('Error saving result:', error));
+            }
+            
+            // Get CSRF token from cookies
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+            
+            // Navigate to next question or results page
+            function navigateNext() {
+                {% if is_last_question %}
+                window.location.href = "{% url 'flagd:play_results' mode=mode %}?timer={{ timer_duration }}&num_questions={{ num_questions }}";
+                {% else %}
+                window.location.href = "{% url 'flagd:play_game' mode=mode %}?timer={{ timer_duration }}&num_questions={{ num_questions }}&current_question={{ current_question|add:1 }}";
+                {% endif %}
+            }
+            
             // Handle when time runs out
             function handleTimeUp() {
                 if (isAnswered) return;
@@ -123,13 +170,12 @@
                 
                 resultMessage.innerHTML = '<p class="time-up">Time\'s up! The answer was: <strong>{{ flag.country_name }}</strong></p>';
                 
+                // Save incorrect result (time's up counts as wrong)
+                saveResult(false);
+                
                 // Navigate to next question or show results
                 setTimeout(function() {
-                    {% if is_last_question %}
-                    window.location.href = "{% url 'flagd:play' %}";
-                    {% else %}
-                    window.location.href = "{% url 'flagd:play_game' mode=mode %}?timer={{ timer_duration }}&num_questions={{ num_questions }}&current_question={{ current_question|add:1 }}";
-                    {% endif %}
+                    navigateNext();
                 }, 3000);
             }
             
@@ -144,13 +190,12 @@
                 
                 resultMessage.innerHTML = '<p class="correct">Correct! Well done!</p>';
                 
+                // Save correct result
+                saveResult(true);
+                
                 // Navigate to next question or show results
                 setTimeout(function() {
-                    {% if is_last_question %}
-                    window.location.href = "{% url 'flagd:play' %}";
-                    {% else %}
-                    window.location.href = "{% url 'flagd:play_game' mode=mode %}?timer={{ timer_duration }}&num_questions={{ num_questions }}&current_question={{ current_question|add:1 }}";
-                    {% endif %}
+                    navigateNext();
                 }, 1500);
             }
             
