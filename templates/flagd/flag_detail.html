@@ -33,7 +33,11 @@
         {% endif %}
 
         <p>
-            <a href="{% url 'flagd:catalogue' %}">← Back to all flags</a>
+            {% if next_url %}
+                <a href="{{ next_url }}">← Back to Results</a>
+            {% else %}
+                <a href="{% url 'flagd:catalogue' %}">← Back to all flags</a>
+            {% endif %}
         </p>
     </div>
 {% endblock %}

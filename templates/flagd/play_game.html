@@ -47,6 +47,7 @@
                 <div class="guess-form">
                     <input type="text" id="guess-input" placeholder="Enter country name..." autocomplete="off" />
                     <button type="button" id="submit-guess">Submit Guess</button>
+                    <button type="button" id="skip-button" class="skip-btn">Skip</button>
                 </div>
                 <div id="result-message"></div>
             </div>
@@ -65,6 +66,7 @@
             const resultMessage = document.getElementById('result-message');
             const timerSeconds = document.getElementById('timer-seconds');
             const timerProgress = document.getElementById('timer-progress');
+            const skipButton = document.getElementById('skip-button');
             
             // Timer configuration - easy to change!
             const TIMER_DURATION = {{ timer_duration }}; // seconds
@@ -204,6 +206,27 @@
                 resultMessage.innerHTML = '<p class="incorrect">Incorrect. Try again!</p>';
             }
             
+            // Handle skip button click
+            function handleSkip() {
+                if (isAnswered) return;
+                isAnswered = true;
+                
+                clearInterval(timerInterval);
+                guessInput.disabled = true;
+                submitButton.disabled = true;
+                skipButton.disabled = true;
+                
+                resultMessage.innerHTML = '<p class="skipped">Skipped! The answer was: <strong>{{ flag.country_name }}</strong></p>';
+                
+                // Save incorrect result (skipping counts as wrong)
+                saveResult(false);
+                
+                // Navigate to next question or show results
+                setTimeout(function() {
+                    navigateNext();
+                }, 2000);
+            }
+            
             submitButton.addEventListener('click', function() {
                 if (isAnswered) return;
                 
@@ -222,6 +245,11 @@
                 if (e.key === 'Enter') {
                     submitButton.click();
                 }
+            });
+            
+            // Skip button event listener
+            skipButton.addEventListener('click', function() {
+                handleSkip();
             });
             
             // Start the timer when page loads

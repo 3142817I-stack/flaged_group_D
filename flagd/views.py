@@ -160,6 +160,10 @@ def play_game(request, mode):
     if current_question == 1:
         request.session['shown_flags'] = []
         shown_flags = []
+        # Also clear quiz results when starting a new game
+        if 'quiz_results' in request.session:
+            del request.session['quiz_results']
+            request.session.modified = True
     else:
         shown_flags = request.session.get('shown_flags', [])
     
@@ -283,11 +287,6 @@ def play_results(request, mode):
         except UserProfile.DoesNotExist:
             pass
     
-    # Clear quiz results from session after displaying
-    if 'quiz_results' in request.session:
-        del request.session['quiz_results']
-        request.session.modified = True
-    
     context_dict = {
         'mode': mode,
         'mode_name': mode_names.get(mode, mode.title()),
@@ -336,9 +335,13 @@ def flag_detail(request, flag_id):
     flag = get_object_or_404(Flag, flag_id=flag_id)
     aliases = flag.aliases.all().order_by('alias_name')
 
+    # Get the 'next' parameter to determine where to go back to
+    next_url = request.GET.get('next', None)
+
     context_dict = {
         'flag': flag,
         'aliases': aliases,
+        'next_url': next_url,
     }
     return render(request, 'flagd/flag_detail.html', context=context_dict)
 
