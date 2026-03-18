@@ -1,0 +1,56 @@
+{% extends 'flagd/base.html' %}
+{% load staticfiles %}
+
+{% block title_block %}
+    Catalogue
+{% endblock %}
+
+{% block body_block %}
+<div class="leaderboard-container">
+    <div class="leaderboard-header">
+        <h1>All Flags</h1>
+        <p>Browse every flag in alphabetical order</p>
+     </div>
+
+    <form method="get" action="{% url 'flagd:catalogue' %}" style="margin-bottom: 20px;">
+        <input type="text" name="q" value="{{ query }}" placeholder="Search by country or alternative name">
+        <input type="submit" value="Search">
+     </form>
+
+    {% if query %}
+        <p>Showing results for: <strong>{{ query }}</strong></p>
+    {% endif %}
+
+    <table class="leaderboard-table">
+        <thead>
+            <tr>
+                <th>Country</th>
+                <th>Flag</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for flag in flags %}
+            <tr>
+                <td>
+                    <a href="{% url 'flagd:flag_detail' flag.flag_id %}">
+                        {{ flag.country_name }}
+                    </a>
+                </td>
+                <td>
+                    <a href="{% url 'flagd:flag_detail' flag.flag_id %}">
+                        <img src="https://flagcdn.com/w80/{{ flag.country_code|lower }}.png" alt="{{ flag.country_name }} flag" width="80">
+                    </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr class="empty-row">
+                <td colspan="2">No flags found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
+{% endblock %}
+
