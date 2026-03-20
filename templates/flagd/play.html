@@ -6,49 +6,79 @@
 {% endblock %}
 
 {% block body_block %}
-    <div class="play-page">
-        <h1>Select Game Mode</h1>
+    <div class="container py-5">
+        <div class="row mb-5">
+            <div class="col-12 text-center">
+                <h1 class="display-4 fw-bold text-white mb-4">Select Game Mode</h1>
+            </div>
+        </div>
 
-        <div class="modes-container">
-            <div class="mode">
-                <h2>Global</h2>
-                <a href="{% url 'flagd:play_timer' mode='global' %}" class="mode-link">
-                    <div class="global-card">
-                        <img id="globe" src="{% static 'images/globe.png' %}" alt="Picture of a Globe"/>
+        <div class="row g-4">
+            <!-- Global Mode -->
+            <div class="col-12">
+                <div class="card h-100 border-0 shadow-sm bg-white bg-opacity-75">
+                    <div class="card-body text-center">
+                        <h2 class="card-title h3 mb-4">Global</h2>
+                        <a href="{% url 'flagd:play_timer' mode='global' %}" class="text-decoration-none">
+                            <div class="p-4">
+                                <img id="globe" src="{% static 'images/globe.png' %}" alt="Picture of a Globe" class="img-fluid" style="max-width: 200px;"/>
+                            </div>
+                            <p class="text-muted mt-3">Guess flags from all countries around the world!</p>
+                        </a>
                     </div>
-                    <p class="mode-description">Guess flags from all countries around the world!</p>
-                </a>
+                </div>
             </div>
 
-            <div class="mode">
-                <h2>Continents</h2>
-                <div class="continents-container">
-                    <a href="{% url 'flagd:play_timer' mode='europe' %}" class="mode-link continent-link">
-                        <div class="continent-card">
-                            <img src="{% static 'images/europe.png' %}" alt="Picture of Europe"/>
-                            <p>Europe</p>
+            <!-- Continents Mode -->
+            <div class="col-12">
+                <div class="card h-100 border-0 shadow-sm bg-white bg-opacity-75">
+                    <div class="card-body">
+                        <h2 class="card-title h3 text-center mb-4">Continents</h2>
+                        <div class="row g-3">
+                            <div class="col-6 col-md-3">
+                                <a href="{% url 'flagd:play_timer' mode='europe' %}" class="text-decoration-none">
+                                    <div class="card h-100 border-2 border-primary">
+                                        <div class="card-body text-center">
+                                            <img src="{% static 'images/europe.png' %}" alt="Picture of Europe" class="img-fluid mb-2" style="max-width: 100px;"/>
+                                            <p class="mb-0 fw-bold">Europe</p>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <a href="{% url 'flagd:play_timer' mode='africa' %}" class="text-decoration-none">
+                                    <div class="card h-100 border-2 border-primary">
+                                        <div class="card-body text-center">
+                                            <img src="{% static 'images/africa.png' %}" alt="Picture of Africa" class="img-fluid mb-2" style="max-width: 100px;"/>
+                                            <p class="mb-0 fw-bold">Africa</p>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <a href="{% url 'flagd:play_timer' mode='asiaoceania' %}" class="text-decoration-none">
+                                    <div class="card h-100 border-2 border-primary">
+                                        <div class="card-body text-center">
+                                            <img src="{% static 'images/asiaoceania.png' %}" alt="Picture of Asia Oceania" class="img-fluid mb-2" style="max-width: 100px;"/>
+                                            <p class="mb-0 fw-bold">Asia Oceania</p>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <a href="{% url 'flagd:play_timer' mode='americas' %}" class="text-decoration-none">
+                                    <div class="card h-100 border-2 border-primary">
+                                        <div class="card-body text-center">
+                                            <img src="{% static 'images/americas.png' %}" alt="Picture of Americas" class="img-fluid mb-2" style="max-width: 100px;"/>
+                                            <p class="mb-0 fw-bold">Americas</p>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
                         </div>
-                    </a>
-                    <a href="{% url 'flagd:play_timer' mode='africa' %}" class="mode-link continent-link">
-                        <div class="continent-card">
-                            <img src="{% static 'images/africa.png' %}" alt="Picture of Africa"/>
-                            <p>Africa</p>
-                        </div>
-                    </a>
-                    <a href="{% url 'flagd:play_timer' mode='asiaoceania' %}" class="mode-link continent-link">
-                        <div class="continent-card">
-                            <img src="{% static 'images/asiaoceania.png' %}" alt="Picture of Asia Oceania"/>
-                            <p>Asia Oceania</p>
-                        </div>
-                    </a>
-                    <a href="{% url 'flagd:play_timer' mode='americas' %}" class="mode-link continent-link">
-                        <div class="continent-card">
-                            <img src="{% static 'images/americas.png' %}" alt="Picture of Americas"/>
-                            <p>Americas</p>
-                        </div>
-                    </a>
+                        <p class="text-muted text-center mt-4 mb-0">Select a continent to play!</p>
+                    </div>
                 </div>
-                <p class="mode-description">Select a continent to play!</p>
             </div>
         </div>
     </div>

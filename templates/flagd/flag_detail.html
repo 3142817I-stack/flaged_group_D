@@ -6,38 +6,46 @@
 {% endblock %}
 
 {% block body_block %}
-    <div class="leaderboard-container">
-        <div class="leaderboard-header">
-            <h1>{{ flag.country_name }}</h1>
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm bg-white bg-opacity-75">
+                    <div class="card-body">
+                        <div class="text-center mb-4">
+                            <h1 class="h2 mb-3">{{ flag.country_name }}</h1>
+                            <img src="https://flagcdn.com/w320/{{ flag.country_code|lower }}.png"
+                                 alt="{{ flag.country_name }} flag"
+                                 class="img-fluid mb-3"
+                                 style="max-width: 320px;">
+                        </div>
+
+                        <div class="mb-4">
+                            <p><strong>Country:</strong> {{ flag.country_name }}</p>
+                            <p><strong>Continent:</strong> {{ flag.continent }}</p>
+                            <p><strong>Country code:</strong> {{ flag.country_code|upper }}</p>
+                        </div>
+
+                        <h2 class="h4 mb-3">Alternative names</h2>
+                        {% if aliases %}
+                            <ul class="list-group list-group-flush mb-4">
+                                {% for alias in aliases %}
+                                    <li class="list-group-item">{{ alias.alias_name }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p class="text-muted mb-4">No alternative names listed.</p>
+                        {% endif %}
+
+                        <div class="text-center">
+                            {% if next_url %}
+                                <a href="{{ next_url }}" class="btn btn-primary">← Back to Results</a>
+                            {% else %}
+                                <a href="{% url 'flagd:catalogue' %}" class="btn btn-secondary">← Back to all flags</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-
-        <div style="text-align: center; margin-bottom: 20px;">
-            <img src="https://flagcdn.com/w320/{{ flag.country_code|lower }}.png"
-                 alt="{{ flag.country_name }} flag"
-                 width="220">
-        </div>
-
-        <p><strong>Country:</strong> {{ flag.country_name }}</p>
-        <p><strong>Continent:</strong> {{ flag.continent }}</p>
-        <p><strong>Country code:</strong> {{ flag.country_code|upper }}</p>
-
-        <h2>Alternative names</h2>
-        {% if aliases %}
-            <ul>
-                {% for alias in aliases %}
-                    <li>{{ alias.alias_name }}</li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p>No alternative names listed.</p>
-        {% endif %}
-
-        <p>
-            {% if next_url %}
-                <a href="{{ next_url }}">← Back to Results</a>
-            {% else %}
-                <a href="{% url 'flagd:catalogue' %}">← Back to all flags</a>
-            {% endif %}
-        </p>
     </div>
 {% endblock %}

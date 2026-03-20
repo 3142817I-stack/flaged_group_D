@@ -15,6 +15,7 @@ from flagd.forms import * #UserForm, UserProfileForm, UserUpdateForm, UserProfil
 
 import random
 
+
 def index(request):
     context_dict = {}
     from django.contrib.auth.models import User
@@ -206,7 +207,60 @@ def play_game(request, mode):
             'is_last_question': current_question >= num_questions
         }
     
-    return render(request, 'flagd/play_game.html', context=context_dict)
+    # Check if this is an AJAX request
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        # Build JSON response for AJAX
+        if 'flag' in context_dict:
+            flag = context_dict['flag']
+            flag_data = {
+                'flag_id': flag.flag_id,
+                'country_name': flag.country_name,
+                'country_code': flag.country_code,
+                'continent': flag.continent,
+            }
+            aliases_data = context_dict['aliases']
+        else:
+            flag_data = None
+            aliases_data = []
+        
+        data = {
+            'flag': flag_data,
+            'aliases': aliases_data,
+            'mode': context_dict['mode'],
+            'mode_name': context_dict['mode_name'],
+            'timer_duration': context_dict['timer_duration'],
+            'num_questions': context_dict['num_questions'],
+            'current_question': context_dict['current_question'],
+            'is_last_question': context_dict['is_last_question']
+        }
+        return JsonResponse(data)
+    else:
+        # For non-AJAX requests, add initial data for the template to use
+        if 'flag' in context_dict:
+            flag = context_dict['flag']
+            flag_data = {
+                'flag_id': flag.flag_id,
+                'country_name': flag.country_name,
+                'country_code': flag.country_code,
+                'continent': flag.continent,
+            }
+            aliases_data = list(flag.aliases.values_list('alias_name', flat=True))
+        else:
+            flag_data = None
+            aliases_data = []
+        
+        context_dict['initial_data_json'] = json.dumps({
+            'flag': flag_data,
+            'aliases': aliases_data,
+            'mode': mode,
+            'mode_name': mode_names.get(mode, mode.title()),
+            'timer_duration': timer_duration,
+            'num_questions': num_questions,
+            'current_question': current_question,
+            'is_last_question': current_question >= num_questions
+        })
+        
+        return render(request, 'flagd/play_game.html', context=context_dict)
 
 
 @require_http_methods(["POST"])
@@ -305,25 +359,25 @@ def play_results(request, mode):
 #all the catalogue views
 def catalogue(request):
     query = request.GET.get('q', '').strip()
-
+    
     flags = Flag.objects.all().order_by('country_name')
-
+    
     if query:
         flags = Flag.objects.filter(
             Q(country_name__icontains=query) |
             Q(aliases__alias_name__icontains=query)
         ).distinct().order_by('country_name')
-
+        
         # If there is exactly one result and it exactly matches a country or alias,
         # send the user straight to the detail page.
         exact_match = Flag.objects.filter(
             Q(country_name__iexact=query) |
             Q(aliases__alias_name__iexact=query)
         ).distinct()
-
+        
         if exact_match.count() == 1:
             return redirect('flagd:flag_detail', flag_id=exact_match.first().flag_id)
-
+    
     context_dict = {
         'flags': flags,
         'query': query,
@@ -334,10 +388,10 @@ def catalogue(request):
 def flag_detail(request, flag_id):
     flag = get_object_or_404(Flag, flag_id=flag_id)
     aliases = flag.aliases.all().order_by('alias_name')
-
+    
     # Get the 'next' parameter to determine where to go back to
     next_url = request.GET.get('next', None)
-
+    
     context_dict = {
         'flag': flag,
         'aliases': aliases,
@@ -351,15 +405,15 @@ def account(request):
     #if user signed in already, redirect
     if request.user.is_authenticated:
         return redirect('flagd:user_profile', profile_name_slug=request.user.username)
-
+    
     error_message = None
-
+    
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-
+        
         user = authenticate(username=username, password=password)
-
+        
         if user:
             if user.is_active:
                 login(request, user)
@@ -368,7 +422,7 @@ def account(request):
                 error_message = "Your account is disabled."
         else:
             error_message = "Invalid username or password."
-
+    
     return render(request, 'flagd/account.html', {'error_message': error_message})
 
 
@@ -376,35 +430,35 @@ def sign_up(request):
     #also if user already signed up, redirect to profile
     if request.user.is_authenticated:
         return redirect('flagd:user_profile', profile_name_slug=request.user.username)
-
+    
     if request.method == 'POST':
         user_form = UserForm(request.POST)
         profile_form = UserProfileForm(request.POST, request.FILES)
-
+        
         if user_form.is_valid() and profile_form.is_valid():
             user = user_form.save()
-
+            
             profile = profile_form.save(commit=False)
             profile.user = user
-
+            
             if 'picture' in request.FILES:
                 profile.picture = request.FILES['picture']
             else:
                 profile.picture = random.choice(settings.DEFAULT_PFPS)
-
+            
             profile.save()
             login(request, user)  # login after signup completed
-
+            
             # go straight to profile page
             return redirect('flagd:user_profile', profile_name_slug=user.username)
-
+        
         else:
             print(user_form.errors, profile_form.errors)
-
+    
     else:
         user_form = UserForm()
         profile_form = UserProfileForm()
-
+    
     return render(request, 'flagd/sign_up.html',{'user_form': user_form,'profile_form': profile_form,})
 
 
@@ -417,7 +471,7 @@ def user_profile(request, profile_name_slug):
         return HttpResponse("User not found.")
     except UserProfile.DoesNotExist:
         return HttpResponse("Profile not found.")
-
+    
     context_dict = {
         'selected_user': user,
         'profile': profile,
@@ -431,9 +485,9 @@ def user_settings(request):
     profile_form = UserProfileUpdateForm(instance=request.user.userprofile)
     password_form = PasswordChangeForm(user=request.user)
     delete_form = DeleteAccountForm(user=request.user)
-
+    
     success_message = None
-
+    
     if request.method == 'POST':
         if 'update_profile' in request.POST:
             user_form = UserUpdateForm(request.POST, instance=request.user)
@@ -444,35 +498,35 @@ def user_settings(request):
             )
             password_form = PasswordChangeForm(user=request.user)
             delete_form = DeleteAccountForm(user=request.user)
-
+            
             if user_form.is_valid() and profile_form.is_valid():
                 user_form.save()
                 profile_form.save()
                 success_message = "Profile updated successfully."
-
+        
         elif 'change_password' in request.POST:
             user_form = UserUpdateForm(instance=request.user)
             profile_form = UserProfileUpdateForm(instance=request.user.userprofile)
             password_form = PasswordChangeForm(user=request.user, data=request.POST)
             delete_form = DeleteAccountForm(user=request.user)
-
+            
             if password_form.is_valid():
                 user = password_form.save()
                 update_session_auth_hash(request, user)
                 success_message = "Password changed successfully."
-
+        
         elif 'delete_account' in request.POST:
             user_form = UserUpdateForm(instance=request.user)
             profile_form = UserProfileUpdateForm(instance=request.user.userprofile)
             password_form = PasswordChangeForm(user=request.user)
             delete_form = DeleteAccountForm(user=request.user, data=request.POST)
-
+            
             if delete_form.is_valid():
                 user = request.user
                 logout(request)
                 user.delete()
                 return redirect('flagd:index')
-
+    
     return render(
         request,'flagd/user_settings.html', 
         {'user_form': user_form, 'profile_form': profile_form, 'password_form': password_form, 'delete_form': delete_form, 'success_message': success_message,}
