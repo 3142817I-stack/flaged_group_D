@@ -195,7 +195,7 @@ document.addEventListener('DOMContentLoaded', function() {
         };
         
         // Return the promise so we can wait for it
-        return fetch("/flagd/save_quiz_result/", {
+        return fetch("/flagd/play/save-result/", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -379,6 +379,9 @@ document.addEventListener('DOMContentLoaded', function() {
         if (isAnswered) return;
         // Don't set isAnswered here - allow multiple attempts
         resultMessage.innerHTML = '<p class="text-danger fw-bold">Incorrect. Try again!</p>';
+        
+        // Save incorrect result
+        saveResultPromises.push(saveResult(false));
     }
     
     // Handle skip button click
