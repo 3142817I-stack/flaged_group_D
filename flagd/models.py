@@ -6,7 +6,7 @@ class UserProfile(models.Model):
     # The additional attributes we wish to include.
 
     score = models.IntegerField(default=0)
-    picture = models.ImageField(upload_to='profile_images', blank=True)
+    picture = models.ImageField(upload_to='profile_pics/', blank=True)
     
     def __str__(self):
         return self.user.username
