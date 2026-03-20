@@ -28,10 +28,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Parse initial data from template
-            let initialData = null;
-            {% if initial_data_json %}
-            initialData = JSON.parse('{{ initial_data_json|escapejs }}');
-            {% endif %}
+            const initialData = {% if initial_data_json %}{{ initial_data_json|safe }}{% else %}null{% endif %};
             
             // DOM elements
             const gameContent = document.getElementById('game-content');
@@ -77,8 +74,8 @@
                 modeName = data.mode_name;
                 isLastQuestion = data.is_last_question;
                 flag = data.flag;
-                // Store aliases in lowercase for case-insensitive comparison
-                aliases = data.aliases.map(alias => alias.toLowerCase());
+                // Store aliases in lowercase for case-insensitive comparison, and include the country name
+                aliases = [...data.aliases, flag.country_name].map(alias => alias.toLowerCase());
                 
                 // Update UI
                 modeTitle.textContent = modeName + ' Mode';
@@ -164,7 +161,7 @@
             }
             
             function updateProgressBar() {
-                const percentage = (currentQuestion / numQuestions) * 100;
+                const percentage = ((currentQuestion - 1) / numQuestions) * 100;
                 document.getElementById('progress-fill').style.width = percentage + '%';
             }
             
@@ -262,8 +259,8 @@
                         modeName = data.mode_name;
                         isLastQuestion = data.is_last_question;
                         flag = data.flag;
-                        // Store aliases in lowercase for case-insensitive comparison
-                        aliases = data.aliases.map(alias => alias.toLowerCase());
+                        // Store aliases in lowercase for case-insensitive comparison, and include the country name
+                        aliases = [...data.aliases, flag.country_name].map(alias => alias.toLowerCase());
                         
                         // Update UI
                         modeTitle.textContent = modeName + ' Mode';
