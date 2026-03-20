@@ -16,7 +16,7 @@
                             {% if profile.picture %}
                                 <img src="{{ profile.picture.url }}" alt="Profile picture" class="rounded-circle" style="width: 110px; height: 110px; object-fit: cover; border: 3px solid #667eea;">
                             {% else %}
-                                <img src="{% static 'images/default_pfp.png' %}" alt="Default profile" class="rounded-circle" style="width: 110px; height: 110px; object-fit: cover; border: 3px solid #667eea;">
+                                <img src="{% static 'images/logo.png' %}" alt="Default profile picture" class="rounded-circle" style="width: 110px; height: 110px; object-fit: cover; border: 3px solid #667eea;">
                             {% endif %}
                         </div>
                         <div class="flex-grow-1 ms-4">
