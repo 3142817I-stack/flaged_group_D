@@ -16,11 +16,19 @@
             <!-- Score Summary -->
             <div class="score-summary">
                 <div class="score-circle">
-                    <div class="score-percentage">{{ percentage }}%</div>
-                    <div class="score-label">Correct</div>
+                    <div class="score-percentage">{{ score_percentage }}%</div>
+                    <div class="score-label">Time Score</div>
                 </div>
                 
                 <div class="score-details">
+                    <div class="score-stat">
+                        <span class="stat-value">{{ total_score }}</span>
+                        <span class="stat-label">Time Score</span>
+                    </div>
+                    <div class="score-stat">
+                        <span class="stat-value">{{ max_possible_score }}</span>
+                        <span class="stat-label">Max Possible</span>
+                    </div>
                     <div class="score-stat">
                         <span class="stat-value">{{ correct_answers }}</span>
                         <span class="stat-label">Correct</span>
@@ -38,13 +46,13 @@
             
             <!-- Performance Message -->
             <div class="performance-message">
-                {% if percentage == 100 %}
+                {% if score_percentage == 100 %}
                     <p class="perfect">🎉 Perfect Score! Amazing work!</p>
-                {% elif percentage >= 80 %}
+                {% elif score_percentage >= 80 %}
                     <p class="excellent">🌟 Excellent! You really know your flags!</p>
-                {% elif percentage >= 60 %}
+                {% elif score_percentage >= 60 %}
                     <p class="good">👍 Good job! Keep practicing!</p>
-                {% elif percentage >= 40 %}
+                {% elif score_percentage >= 40 %}
                     <p class="okay">📚 Not bad! Room for improvement.</p>
                 {% else %}
                     <p class="needs-work">💪 Keep trying! Practice makes perfect!</p>
