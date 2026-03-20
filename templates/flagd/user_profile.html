@@ -6,47 +6,52 @@
 {% endblock %}
 
 {% block body_block %}
-<div class="profile-page">
-    <div class="profile-card">
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm bg-white bg-opacity-75">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="flex-shrink-0">
+                            {% if profile.picture %}
+                                <img src="{{ profile.picture.url }}" alt="Profile picture" class="rounded-circle" style="width: 110px; height: 110px; object-fit: cover; border: 3px solid #667eea;">
+                            {% else %}
+                                <img src="{% static 'images/default_pfp.png' %}" alt="Default profile" class="rounded-circle" style="width: 110px; height: 110px; object-fit: cover; border: 3px solid #667eea;">
+                            {% endif %}
+                        </div>
+                        <div class="flex-grow-1 ms-4">
+                            <h1 class="h2 mb-1">{{ profile.user.username }}</h1>
+                            <p class="text-muted mb-1">{{ profile.user.email }}</p>
+                            <p class="text-muted small mb-0">Joined {{ profile.user.date_joined|date:"F j, Y" }}</p>
+                        </div>
+                    </div>
 
-        <div class="profile-header">
-            <div class="profile-avatar">
-                {% if profile.picture %}
-                    <img src="{{ profile.picture.url }}" alt="Profile picture">
-                {% else %}
-                    <img src="{% static 'images/default_pfp.png' %}" alt="Default profile">
-                {% endif %}
-            </div>
+                    <div class="mb-4">
+                        <h2 class="h4 mb-3">🏆 Stats</h2>
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <div class="card bg-gradient text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                    <div class="card-body text-center">
+                                        <div class="display-4 fw-bold">{{ profile.score }}</div>
+                                        <div class="small">Top Score</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-            <div class="profile-main-info">
-                <h1>{{ profile.user.username }}</h1>
-                <p class="profile-email">{{ profile.user.email }}</p>
-                <p class="profile-joined">
-                    Joined {{ profile.user.date_joined|date:"F j, Y" }}
-                </p>
-            </div>
-        </div>
-
-        <div class="profile-section">
-            <h2>🏆 Stats</h2>
-            <div class="profile-stats-grid">
-                <div class="stat-card">
-                    <span class="stat-value">{{ profile.score }}</span>
-                    <span class="stat-label">Top Score</span>
+                    <!-- Actions -->
+                    <div class="d-flex gap-2 justify-content-center">
+                        <a href="{% url 'flagd:user_settings' %}" class="btn btn-primary-custom">
+                            Account Settings
+                        </a>
+                        <a href="{% url 'flagd:logout' %}" class="btn btn-danger-custom">
+                            Logout
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
-
-        <!-- Actions -->
-        <div class="profile-actions">
-            <a href="{% url 'flagd:user_settings' %}" class="btn-primary">
-                Account Settings
-            </a>
-            <a href="{% url 'flagd:logout' %}" class="btn-danger">
-                Logout
-            </a>
-        </div>
-
     </div>
 </div>
 {% endblock %}

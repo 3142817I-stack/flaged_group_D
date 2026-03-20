@@ -6,51 +6,66 @@
 {% endblock %}
 
 {% block body_block %}
-    <div class="timer-selection-page">
-        <div class="timer-selection-header">
-            <h1>{{ mode_name }} Mode</h1>
-            <p>Choose how many questions you want</p>
-        </div>
-        
-        <div class="back-link">
-            <a href="{% url 'flagd:play_timer' mode=mode %}?timer={{ timer_duration }}">&larr; Back to Timer Selection</a>
+    <div class="container py-5">
+        <div class="row mb-4">
+            <div class="col-12 text-center">
+                <h1 class="display-4 fw-bold text-white mb-2">{{ mode_name }} Mode</h1>
+                <p class="text-white-50">Choose how many questions you want</p>
+            </div>
         </div>
 
-        <div class="timer-selection-container">
-            <div class="timer-options">
-                {% for count in question_options %}
-                <a href="{% url 'flagd:play_game' mode=mode %}?timer={{ timer_duration }}&num_questions={{ count }}&current_question=1" class="timer-option {% if count == total_flags %}timer-option-recommended{% endif %}">
-                    {% if count == total_flags %}
-                    <div class="timer-option-badge">All Flags</div>
-                    {% endif %}
-                    <div class="timer-option-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <line x1="12" y1="8" x2="12" y2="12"></line>
-                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                        </svg>
+        <div class="mb-3">
+            <a href="{% url 'flagd:play_timer' mode=mode %}?timer={{ timer_duration }}" class="text-white text-decoration-none">
+                &larr; Back to Timer Selection
+            </a>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <div class="card bg-white bg-opacity-75 border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="list-group list-group-flush">
+                            {% for count in question_options %}
+                            <a href="{% url 'flagd:play_game' mode=mode %}?timer={{ timer_duration }}&num_questions={{ count }}&current_question=1" class="list-group-item list-group-item-action d-flex align-items-center py-3 {% if count == total_flags %}list-group-item-primary{% endif %}">
+                                {% if count == total_flags %}
+                                <span class="badge bg-primary position-absolute top-0 end-0 m-2">All Flags</span>
+                                {% endif %}
+                                <div class="flex-shrink-0 me-3">
+                                    <div class="bg-light p-2 rounded">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-secondary">
+                                            <circle cx="12" cy="12" r="10"></circle>
+                                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <div class="d-flex align-items-center">
+                                        <span class="fs-3 fw-bold me-2">{{ count }}</span>
+                                        <span class="text-muted">questions</span>
+                                    </div>
+                                </div>
+                                {% if count == 5 %}
+                                <span class="badge bg-danger">Quick</span>
+                                {% elif count == 10 %}
+                                <span class="badge bg-warning text-dark">Standard</span>
+                                <span class="badge bg-success ms-1">High Score</span>
+                                {% elif count == 15 %}
+                                <span class="badge bg-success">Extended</span>
+                                {% elif count == 20 %}
+                                <span class="badge bg-info text-dark">Marathon</span>
+                                {% else %}
+                                <span class="badge bg-secondary">Complete</span>
+                                {% endif %}
+                            </a>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="mt-4 p-3 bg-light rounded text-center">
+                            <p class="mb-0">Total flags available: <strong>{{ total_flags }}</strong></p>
+                        </div>
                     </div>
-                    <div class="timer-option-content">
-                        <span class="timer-option-value">{{ count }}</span>
-                        <span class="timer-option-label">questions</span>
-                    </div>
-                    {% if count == 5 %}
-                    <span class="timer-option-difficulty difficulty-hard">Quick</span>
-                    {% elif count == 10 %}
-                    <span class="timer-option-difficulty difficulty-medium">Standard</span>
-                    {% elif count == 15 %}
-                    <span class="timer-option-difficulty difficulty-easy">Extended</span>
-                    {% elif count == 20 %}
-                    <span class="timer-option-difficulty difficulty-relaxed">Marathon</span>
-                    {% else %}
-                    <span class="timer-option-difficulty difficulty-practice">Complete</span>
-                    {% endif %}
-                </a>
-                {% endfor %}
-            </div>
-            
-            <div class="questions-info">
-                <p>Total flags available: <strong>{{ total_flags }}</strong></p>
+                </div>
             </div>
         </div>
     </div>

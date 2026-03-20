@@ -228,3 +228,10 @@ marimo/_lsp/
 __marimo__/
 .DS_Store
 db.sqlite3
+
+
+
+# Ignore user uploaded media (pfps)
+media/profile_pics/*
+!media/profile_pics/default_pfps/
+!media/profile_pics/default_pfps/**

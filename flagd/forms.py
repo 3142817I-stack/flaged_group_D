@@ -47,7 +47,13 @@ class UserUpdateForm(forms.ModelForm):
         fields = ('username', 'email')
 
 
+#removed option to clear pfp
 class UserProfileUpdateForm(forms.ModelForm):
+    picture = forms.ImageField(
+        required=False,
+        widget=forms.FileInput()
+    )
+
     class Meta:
         model = UserProfile
         fields = ('picture',)

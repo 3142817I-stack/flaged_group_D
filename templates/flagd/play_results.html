@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block body_block %}
-    <div class="results-page">
+    <div class="container results-page">
         <div class="results-header">
             <h1>Quiz Complete!</h1>
             <p>{{ mode_name }} Mode Results</p>
@@ -16,11 +16,19 @@
             <!-- Score Summary -->
             <div class="score-summary">
                 <div class="score-circle">
-                    <div class="score-percentage">{{ percentage }}%</div>
-                    <div class="score-label">Correct</div>
+                    <div class="score-percentage">{{ score_percentage }}%</div>
+                    <div class="score-label">Time Score</div>
                 </div>
                 
                 <div class="score-details">
+                    <div class="score-stat">
+                        <span class="stat-value">{{ total_score }}</span>
+                        <span class="stat-label">Time Score</span>
+                    </div>
+                    <div class="score-stat">
+                        <span class="stat-value">{{ max_possible_score }}</span>
+                        <span class="stat-label">Max Possible</span>
+                    </div>
                     <div class="score-stat">
                         <span class="stat-value">{{ correct_answers }}</span>
                         <span class="stat-label">Correct</span>
@@ -38,13 +46,13 @@
             
             <!-- Performance Message -->
             <div class="performance-message">
-                {% if percentage == 100 %}
+                {% if score_percentage == 100 %}
                     <p class="perfect">🎉 Perfect Score! Amazing work!</p>
-                {% elif percentage >= 80 %}
+                {% elif score_percentage >= 80 %}
                     <p class="excellent">🌟 Excellent! You really know your flags!</p>
-                {% elif percentage >= 60 %}
+                {% elif score_percentage >= 60 %}
                     <p class="good">👍 Good job! Keep practicing!</p>
-                {% elif percentage >= 40 %}
+                {% elif score_percentage >= 40 %}
                     <p class="okay">📚 Not bad! Room for improvement.</p>
                 {% else %}
                     <p class="needs-work">💪 Keep trying! Practice makes perfect!</p>
@@ -68,7 +76,7 @@
                             />
                         </div>
                         <div class="wrong-flag-name">{{ flag.country_name }}</div>
-                        <a href="{% url 'flagd:flag_detail' flag_id=flag.flag_id %}?next={% url 'flagd:play_results' mode=mode %}?timer={{ timer_duration }}&num_questions={{ num_questions }}" class="learn-more-link">Learn More</a>
+                        <a href="{% url 'flagd:flag_detail' flag_id=flag.flag_id %}?next={% url 'flagd:play_results' mode=mode %}&timer={{ timer_duration }}&num_questions={{ num_questions }}" class="learn-more-link">Learn More</a>
                     </div>
                     {% endfor %}
                 </div>
@@ -81,260 +89,16 @@
             
             <!-- Action Buttons -->
             <div class="results-actions">
-                <a href="{% url 'flagd:play_game' mode=mode %}?timer={{ timer_duration }}&num_questions={{ num_questions }}" class="btn btn-primary">
+                <a href="{% url 'flagd:play_game' mode=mode %}?timer={{ timer_duration }}&num_questions={{ num_questions }}" class="btn btn-primary-custom">
                     Play Again
                 </a>
-                <a href="{% url 'flagd:play_questions' mode=mode %}?timer={{ timer_duration }}" class="btn btn-secondary">
+                <a href="{% url 'flagd:play_questions' mode=mode %}?timer={{ timer_duration }}" class="btn btn-secondary-custom">
                     Change Questions
                 </a>
-                <a href="{% url 'flagd:play' %}" class="btn btn-outline">
+                <a href="{% url 'flagd:play' %}" class="btn btn-outline-custom">
                     Choose Mode
                 </a>
             </div>
         </div>
     </div>
-    
-    <style>
-        .results-page {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        .results-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        
-        .results-header h1 {
-            color: white;
-            font-size: 2.5em;
-            margin-bottom: 10px;
-        }
-        
-        .results-header p {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 1.2em;
-        }
-        
-        .results-container {
-            background-color: rgba(255, 255, 255, 0.95);
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        }
-        
-        .score-summary {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 40px;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-        }
-        
-        .score-circle {
-            width: 180px;
-            height: 180px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #3498db, #2ecc71);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 5px 20px rgba(52, 152, 219, 0.4);
-        }
-        
-        .score-percentage {
-            font-size: 3em;
-            font-weight: bold;
-            color: white;
-        }
-        
-        .score-label {
-            font-size: 1.2em;
-            color: rgba(255, 255, 255, 0.9);
-        }
-        
-        .score-details {
-            display: flex;
-            gap: 30px;
-        }
-        
-        .score-stat {
-            text-align: center;
-        }
-        
-        .stat-value {
-            display: block;
-            font-size: 2.5em;
-            font-weight: bold;
-            color: #2c3e50;
-        }
-        
-        .stat-label {
-            color: #7f8c8d;
-            font-size: 1em;
-        }
-        
-        .performance-message {
-            text-align: center;
-            margin-bottom: 30px;
-            padding: 20px;
-            border-radius: 10px;
-            background-color: #f8f9fa;
-        }
-        
-        .performance-message p {
-            font-size: 1.3em;
-            margin: 0;
-        }
-        
-        .performance-message .perfect { color: #27ae60; }
-        .performance-message .excellent { color: #2980b9; }
-        .performance-message .good { color: #f39c12; }
-        .performance-message .okay { color: #e67e22; }
-        .performance-message .needs-work { color: #e74c3c; }
-        
-        .wrong-answers-section {
-            margin-bottom: 30px;
-        }
-        
-        .wrong-answers-section h2 {
-            color: #2c3e50;
-            margin-bottom: 10px;
-            text-align: center;
-        }
-        
-        .wrong-answers-hint {
-            text-align: center;
-            color: #7f8c8d;
-            margin-bottom: 20px;
-        }
-        
-        .wrong-flags-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 20px;
-        }
-        
-        .wrong-flag-card {
-            background-color: #fff;
-            border-radius: 10px;
-            padding: 15px;
-            text-align: center;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-            transition: transform 0.2s ease;
-        }
-        
-        .wrong-flag-card:hover {
-            transform: translateY(-5px);
-        }
-        
-        .wrong-flag-image img {
-            width: 100%;
-            max-width: 120px;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-        }
-        
-        .wrong-flag-name {
-            margin-top: 10px;
-            font-weight: bold;
-            color: #2c3e50;
-            font-size: 0.95em;
-        }
-        
-        .learn-more-link {
-            display: inline-block;
-            margin-top: 8px;
-            color: #3498db;
-            text-decoration: none;
-            font-size: 0.85em;
-        }
-        
-        .learn-more-link:hover {
-            text-decoration: underline;
-        }
-        
-        .no-wrong-answers {
-            text-align: center;
-            padding: 30px;
-            background-color: #d5f4e6;
-            border-radius: 10px;
-            margin-bottom: 30px;
-        }
-        
-        .no-wrong-answers p {
-            color: #27ae60;
-            font-size: 1.2em;
-            margin: 0;
-        }
-        
-        .results-actions {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-        
-        .btn {
-            display: inline-block;
-            padding: 12px 30px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 1em;
-            transition: all 0.2s ease;
-        }
-        
-        .btn-primary {
-            background-color: #3498db;
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            background-color: #2980b9;
-        }
-        
-        .btn-secondary {
-            background-color: #2ecc71;
-            color: white;
-        }
-        
-        .btn-secondary:hover {
-            background-color: #27ae60;
-        }
-        
-        .btn-outline {
-            background-color: transparent;
-            color: #2c3e50;
-            border: 2px solid #2c3e50;
-        }
-        
-        .btn-outline:hover {
-            background-color: #2c3e50;
-            color: white;
-        }
-        
-        @media (max-width: 600px) {
-            .score-summary {
-                flex-direction: column;
-                gap: 20px;
-            }
-            
-            .score-details {
-                gap: 20px;
-            }
-            
-            .results-actions {
-                flex-direction: column;
-            }
-            
-            .btn {
-                width: 100%;
-                text-align: center;
-            }
-        }
-    </style>
 {% endblock %}

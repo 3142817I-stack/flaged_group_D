@@ -6,45 +6,68 @@
 {% endblock %}
 
 {% block body_block %}
-    <div class ="btn-conatiner">
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-7">
+                <div class="content-panel-hero text-center">
+                    <h1 class="display-3 fw-bold text-white mb-4">Welcome to FLAGD!</h1>
+                    <h2 class="h4 text-white mb-4">Learn world Flags and compete for top scores!</h2>
 
-    <h1> Welcome to FLAGD! </h1>
-    <br></br>
-    <h2>Learn world Flags and compete for top scores!</h2>
-    <a href="{% url 'flagd:about' %}">Learn More -></a>
-    <br></br>
-    <button type="Play" class="btn" onclick="window.location.href='{% url 'flagd:play' %}'">Play</button>
+
+                    <a href="{% url 'flagd:about' %}" class="btn btn-outline-light-custom mb-3"> Learn More</a>
+                    <br>
+                    <button type="button" class="btn btn-primary-custom btn-lg" onclick="window.location.href='{% url 'flagd:play' %}'">
+                        Play
+                    </button>
+
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="miniboard-container">
-        <div class="leaderboard-header">
-            <h2>🏅 Current Top 3 Players</h2>
+    <div class="container mb-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-7">
+                <div class="card home-leaderboard-card">
+                    <div class="card-body">
+                        <h2 class="card-title text-center mb-4">🏅 Current Top 3 Players</h2>
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Rank</th>
+                                        <th>Player</th>
+                                        <th>Score</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-center">
+                                    {% for user in top_users %}
+                                    <tr>
+                                        <td>
+                                            {% if forloop.counter == 1 %}
+                                                <span class="badge bg-warning text-dark fs-5">1</span>
+                                            {% elif forloop.counter == 2 %}
+                                                <span class="badge bg-secondary fs-5">2</span>
+                                            {% elif forloop.counter == 3 %}
+                                                <span class="badge bg-warning bg-opacity-50 text-dark fs-5">3</span>
+                                            {% else %}
+                                                <span class="badge bg-light text-dark">{{ forloop.counter }}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td class="align-middle">{{ user.username }}</td>
+                                        <td class="align-middle fw-bold text-success">{{ user.userprofile.score }}</td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="3" class="text-center text-muted">No players yet. Be the first to play!</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <table class ="leaderboard-table">
-            <thead>
-                <tr>
-                    <th>Rank</th>
-                    <th>Player</th>
-                    <th>Score</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for user in top_users %}
-                <tr>
-                    <td>
-                        {% if forloop.counter == 1 %}
-                            <span class="rank-badge rank-1">1</span>
-                        {% elif forloop.counter == 2 %}
-                            <span class="rank-badge rank-2">2</span>
-                        {% elif forloop.counter == 3 %}
-                            <span class="rank-badge rank-3">3</span>
-                        {% endif %}
-                    </td>
-                    <td>{{ user.username }}</td>
-                    <td>{{ user.userprofile.score }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
     </div>
 {% endblock %}

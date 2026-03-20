@@ -1,4 +1,4 @@
- {% extends 'flagd/base.html' %}
+{% extends 'flagd/base.html' %}
 {% load staticfiles %}
 
 {% block title_block %}
@@ -6,255 +6,35 @@
 {% endblock %}
 
 {% block body_block %}
-    <div class="game-page">
-        <div class="game-header">
-            <h1>{{ mode_name }} Mode</h1>
-            <p>Guess the Flag!</p>
-        </div>
-        
-        <div class="back-link">
-            <a href="{% url 'flagd:play' %}">&larr; Back to Mode Selection</a>
+    <div class="container py-4">
+        <div class="row mb-4">
+            <div class="col-12 text-center">
+                <h1 id="mode-title" class="display-4 fw-bold text-white mb-2">{{ mode_name }} Mode</h1>
+                <p class="text-white-50">Guess the Flag!</p>
+            </div>
         </div>
 
-        {% if flag %}
-        <div class="question-progress">
-            <span>Question {{ current_question }} of {{ num_questions }}</span>
-            <div class="progress-bar">
-                <div class="progress-fill" style="width: {% widthratio current_question num_questions 100 %}%"></div>
-            </div>
+        <div class="mb-3">
+            <a href="{% url 'flagd:play' %}" id="back-link" class="text-white text-decoration-none">
+                &larr; Back to Mode Selection
+            </a>
+        </div>
+
+        <div id="game-content">
+            <!-- Game content will be loaded here -->
         </div>
         
-        <div class="game-container">
-            <div class="timer-container">
-                <div class="timer-display">
-                    <span id="timer-seconds">{{ timer_duration }}</span>
-                    <span class="timer-label">seconds</span>
-                </div>
-                <div class="timer-bar">
-                    <div id="timer-progress" class="timer-progress"></div>
-                </div>
-            </div>
-            
-            <div class="flag-display">
-                <div class="flag-container">
-                    <img
-                        src="https://flagcdn.com/w320/{{ flag.country_code }}.png"
-                        srcset="https://flagcdn.com/w640/{{ flag.country_code }}.png 2x, https://flagcdn.com/w960/{{ flag.country_code }}.png 3x"
-                        alt="Flag of {{ flag.country_name }}"
-                        class="flag-image"
-                    />
-                </div>
-                <div class="guess-form">
-                    <input type="text" id="guess-input" placeholder="Enter country name..." autocomplete="off" />
-                    <button type="button" id="submit-guess">Submit Guess</button>
-                    <button type="button" id="skip-button" class="skip-btn">Skip</button>
-                </div>
-                <div id="result-message"></div>
+        <div id="no-flags-message" class="text-center text-white" style="display: none;">
+            <div class="card bg-white bg-opacity-75 p-4">
+                <p>No flags available for <span id="no-flags-mode"></span> mode. Please contact an administrator.</p>
             </div>
         </div>
-        {% else %}
-        <div class="no-flags">
-            <p>No flags available for {{ mode_name }} mode. Please contact an administrator.</p>
-        </div>
-        {% endif %}
     </div>
 
+    <!-- Pass initial data to JavaScript -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const submitButton = document.getElementById('submit-guess');
-            const guessInput = document.getElementById('guess-input');
-            const resultMessage = document.getElementById('result-message');
-            const timerSeconds = document.getElementById('timer-seconds');
-            const timerProgress = document.getElementById('timer-progress');
-            const skipButton = document.getElementById('skip-button');
-            
-            // Timer configuration - easy to change!
-            const TIMER_DURATION = {{ timer_duration }}; // seconds
-            
-            {% if flag %}
-            const correctAnswer = "{{ flag.country_name }}".toLowerCase();
-            const aliases = [
-                "{{ flag.country_name }}".toLowerCase()
-                {% for alias in aliases %}
-                , "{{ alias }}".toLowerCase()
-                {% endfor %}
-            ];
-            
-            let timeRemaining = TIMER_DURATION;
-            let timerInterval = null;
-            let isAnswered = false;
-            
-            // Initialize timer
-            function startTimer() {
-                timeRemaining = TIMER_DURATION;
-                timerSeconds.textContent = timeRemaining;
-                timerProgress.style.width = '100%';
-                timerProgress.classList.remove('warning', 'danger');
-                
-                timerInterval = setInterval(function() {
-                    timeRemaining--;
-                    timerSeconds.textContent = timeRemaining;
-                    
-                    // Update progress bar
-                    const percentage = (timeRemaining / TIMER_DURATION) * 100;
-                    timerProgress.style.width = percentage + '%';
-                    
-                    // Add warning classes based on time remaining
-                    if (timeRemaining <= 5) {
-                        timerProgress.classList.add('danger');
-                        timerProgress.classList.remove('warning');
-                    } else if (timeRemaining <= 10) {
-                        timerProgress.classList.add('warning');
-                    }
-                    
-                    // Time's up!
-                    if (timeRemaining <= 0) {
-                        clearInterval(timerInterval);
-                        handleTimeUp();
-                    }
-                }, 1000);
-            }
-            
-            // Save result to session via AJAX
-            function saveResult(isCorrect) {
-                const data = {
-                    flag_id: {{ flag.flag_id }},
-                    country_name: "{{ flag.country_name }}",
-                    country_code: "{{ flag.country_code }}",
-                    is_correct: isCorrect,
-                    current_question: {{ current_question }},
-                    num_questions: {{ num_questions }},
-                    mode: "{{ mode }}"
-                };
-                
-                fetch("{% url 'flagd:save_quiz_result' %}", {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': getCookie('csrftoken')
-                    },
-                    body: JSON.stringify(data)
-                }).catch(error => console.error('Error saving result:', error));
-            }
-            
-            // Get CSRF token from cookies
-            function getCookie(name) {
-                let cookieValue = null;
-                if (document.cookie && document.cookie !== '') {
-                    const cookies = document.cookie.split(';');
-                    for (let i = 0; i < cookies.length; i++) {
-                        const cookie = cookies[i].trim();
-                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                            break;
-                        }
-                    }
-                }
-                return cookieValue;
-            }
-            
-            // Navigate to next question or results page
-            function navigateNext() {
-                {% if is_last_question %}
-                window.location.href = "{% url 'flagd:play_results' mode=mode %}?timer={{ timer_duration }}&num_questions={{ num_questions }}";
-                {% else %}
-                window.location.href = "{% url 'flagd:play_game' mode=mode %}?timer={{ timer_duration }}&num_questions={{ num_questions }}&current_question={{ current_question|add:1 }}";
-                {% endif %}
-            }
-            
-            // Handle when time runs out
-            function handleTimeUp() {
-                if (isAnswered) return;
-                isAnswered = true;
-                
-                guessInput.disabled = true;
-                submitButton.disabled = true;
-                
-                resultMessage.innerHTML = '<p class="time-up">Time\'s up! The answer was: <strong>{{ flag.country_name }}</strong></p>';
-                
-                // Save incorrect result (time's up counts as wrong)
-                saveResult(false);
-                
-                // Navigate to next question or show results
-                setTimeout(function() {
-                    navigateNext();
-                }, 3000);
-            }
-            
-            // Handle correct answer
-            function handleCorrectAnswer() {
-                if (isAnswered) return;
-                isAnswered = true;
-                
-                clearInterval(timerInterval);
-                guessInput.disabled = true;
-                submitButton.disabled = true;
-                
-                resultMessage.innerHTML = '<p class="correct">Correct! Well done!</p>';
-                
-                // Save correct result
-                saveResult(true);
-                
-                // Navigate to next question or show results
-                setTimeout(function() {
-                    navigateNext();
-                }, 1500);
-            }
-            
-            // Handle incorrect answer
-            function handleIncorrectAnswer() {
-                resultMessage.innerHTML = '<p class="incorrect">Incorrect. Try again!</p>';
-            }
-            
-            // Handle skip button click
-            function handleSkip() {
-                if (isAnswered) return;
-                isAnswered = true;
-                
-                clearInterval(timerInterval);
-                guessInput.disabled = true;
-                submitButton.disabled = true;
-                skipButton.disabled = true;
-                
-                resultMessage.innerHTML = '<p class="skipped">Skipped! The answer was: <strong>{{ flag.country_name }}</strong></p>';
-                
-                // Save incorrect result (skipping counts as wrong)
-                saveResult(false);
-                
-                // Navigate to next question or show results
-                setTimeout(function() {
-                    navigateNext();
-                }, 2000);
-            }
-            
-            submitButton.addEventListener('click', function() {
-                if (isAnswered) return;
-                
-                const userGuess = guessInput.value.trim().toLowerCase();
-                
-                // Check if guess matches country name or any alias
-                if (aliases.includes(userGuess)) {
-                    handleCorrectAnswer();
-                } else {
-                    handleIncorrectAnswer();
-                }
-            });
-            
-            // Allow Enter key to submit
-            guessInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    submitButton.click();
-                }
-            });
-            
-            // Skip button event listener
-            skipButton.addEventListener('click', function() {
-                handleSkip();
-            });
-            
-            // Start the timer when page loads
-            startTimer();
-            {% endif %}
-        });
+        window.initialGameData = {% if initial_data_json %}{{ initial_data_json|safe }}{% else %}null{% endif %};
+        window.backUrl = "{% url 'flagd:play' %}";
     </script>
+    <script src="{% static 'js/play_game.js' %}"></script>
 {% endblock %}

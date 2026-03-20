@@ -6,115 +6,124 @@
 {% endblock %}
 
 {% block body_block %}
-<div class="settings-page">
-    <div class="settings-container">
-        <div class="settings-header">
-            <h1>Account Settings</h1>
-            <p>Manage your profile, password, and account preferences.</p>
-        </div>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm bg-white bg-opacity-75 mb-4">
+                <div class="card-body">
+                    <div class="settings-header text-center">
+                        <h1 class="h3 mb-3">Account Settings</h1>
+                        <p class="text-muted">Manage your profile, password, and account preferences.</p>
+                    </div>
 
-        {% if success_message %}
-            <div class="settings-message success-message">
-                {{ success_message }}
+                    {% if success_message %}
+                        <div class="alert alert-success" role="alert">
+                            {{ success_message }}
+                        </div>
+                    {% endif %}
+
+                    <form method="post" enctype="multipart/form-data" class="settings-form">
+                        {% csrf_token %}
+
+                        <h2 class="h4 mb-3">Update Profile</h2>
+
+                        {{ user_form.non_field_errors }}
+                        {{ profile_form.non_field_errors }}
+
+                        <div class="mb-3">
+                            {{ user_form.username.label_tag }}
+                            {{ user_form.username }}
+                            {{ user_form.username.errors }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ user_form.email.label_tag }}
+                            {{ user_form.email }}
+                            {{ user_form.email.errors }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ profile_form.picture.label_tag }}
+                            {{ profile_form.picture }}
+                            {{ profile_form.picture.errors }}
+                        </div>
+
+                        <button type="submit" name="update_profile" class="btn btn-primary-custom">
+                            Save Profile Changes
+                        </button>
+                    </form>
+                </div>
             </div>
-        {% endif %}
 
-        <div class="settings-card">
-            <h2>Update Profile</h2>
-            <form method="post" enctype="multipart/form-data" class="settings-form">
-                {% csrf_token %}
+            <div class="card border-0 shadow-sm bg-white bg-opacity-75 mb-4">
+                <div class="card-body">
+                    <h2 class="h4 mb-3">Change Password</h2>
+                    <form method="post" class="settings-form">
+                        {% csrf_token %}
 
-                {{ user_form.non_field_errors }}
-                {{ profile_form.non_field_errors }}
+                        {{ password_form.non_field_errors }}
 
-                <div class="form-group">
-                    {{ user_form.username.label_tag }}
-                    {{ user_form.username }}
-                    {{ user_form.username.errors }}
+                        <div class="mb-3">
+                            {{ password_form.old_password.label_tag }}
+                            {{ password_form.old_password }}
+                            {{ password_form.old_password.errors }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ password_form.new_password1.label_tag }}
+                            {{ password_form.new_password1 }}
+                            {{ password_form.new_password1.errors }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ password_form.new_password2.label_tag }}
+                            {{ password_form.new_password2 }}
+                            {{ password_form.new_password2.errors }}
+                        </div>
+
+                        <button type="submit" name="change_password" class="btn btn-primary-custom">
+                            Change Password
+                        </button>
+                    </form>
                 </div>
+            </div>
 
-                <div class="form-group">
-                    {{ user_form.email.label_tag }}
-                    {{ user_form.email }}
-                    {{ user_form.email.errors }}
+            <div class="card border-0 shadow-sm bg-white bg-opacity-75">
+                <div class="card-body">
+                    <h2 class="h4 text-danger mb-3">Delete Account</h2>
+                    <p class="text-danger mb-3">
+                        This action is permanent. Your profile, score, and account access will be removed.
+                    </p>
+
+                    <form method="post" class="settings-form">
+                        {% csrf_token %}
+
+                        {{ delete_form.non_field_errors }}
+
+                        <div class="mb-3">
+                            {{ delete_form.password.label_tag }}
+                            {{ delete_form.password }}
+                            {{ delete_form.password.errors }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ delete_form.confirm_text.label_tag }}
+                            {{ delete_form.confirm_text }}
+                            {{ delete_form.confirm_text.errors }}
+                        </div>
+
+                        <button type="submit" name="delete_account" class="btn btn-danger-custom">
+                            Delete My Account
+                        </button>
+                    </form>
                 </div>
+            </div>
 
-                <div class="form-group">
-                    {{ profile_form.picture.label_tag }}
-                    {{ profile_form.picture }}
-                    {{ profile_form.picture.errors }}
-                </div>
-
-                <button type="submit" name="update_profile" class="btn-primary">
-                    Save Profile Changes
-                </button>
-            </form>
-        </div>
-
-        <div class="settings-card">
-            <h2>Change Password</h2>
-            <form method="post" class="settings-form">
-                {% csrf_token %}
-
-                {{ password_form.non_field_errors }}
-
-                <div class="form-group">
-                    {{ password_form.old_password.label_tag }}
-                    {{ password_form.old_password }}
-                    {{ password_form.old_password.errors }}
-                </div>
-
-                <div class="form-group">
-                    {{ password_form.new_password1.label_tag }}
-                    {{ password_form.new_password1 }}
-                    {{ password_form.new_password1.errors }}
-                </div>
-
-                <div class="form-group">
-                    {{ password_form.new_password2.label_tag }}
-                    {{ password_form.new_password2 }}
-                    {{ password_form.new_password2.errors }}
-                </div>
-
-                <button type="submit" name="change_password" class="btn-primary">
-                    Change Password
-                </button>
-            </form>
-        </div>
-
-        <div class="settings-card danger-card">
-            <h2>Delete Account</h2>
-            <p class="danger-text">
-                This action is permanent. Your profile, score, and account access will be removed.
-            </p>
-
-            <form method="post" class="settings-form">
-                {% csrf_token %}
-
-                {{ delete_form.non_field_errors }}
-
-                <div class="form-group">
-                    {{ delete_form.password.label_tag }}
-                    {{ delete_form.password }}
-                    {{ delete_form.password.errors }}
-                </div>
-
-                <div class="form-group">
-                    {{ delete_form.confirm_text.label_tag }}
-                    {{ delete_form.confirm_text }}
-                    {{ delete_form.confirm_text.errors }}
-                </div>
-
-                <button type="submit" name="delete_account" class="btn-danger">
-                    Delete My Account
-                </button>
-            </form>
-        </div>
-
-        <div class="settings-actions">
-            <a href="{% url 'flagd:user_profile' user.username %}" class="btn-secondary">
-                Back to Profile
-            </a>
+            <div class="text-center mt-3">
+                <a href="{% url 'flagd:user_profile' user.username %}" class="btn btn-secondary-custom">
+                    Back to Profile
+                </a>
+            </div>
         </div>
     </div>
 </div>
