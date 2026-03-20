@@ -68,7 +68,7 @@
                             />
                         </div>
                         <div class="wrong-flag-name">{{ flag.country_name }}</div>
-                        <a href="{% url 'flagd:flag_detail' flag_id=flag.flag_id %}?next={% url 'flagd:play_results' mode=mode %}?timer={{ timer_duration }}&num_questions={{ num_questions }}" class="learn-more-link">Learn More</a>
+                        <a href="{% url 'flagd:flag_detail' flag_id=flag.flag_id %}?next={% url 'flagd:play_results' mode=mode %}&timer={{ timer_duration }}&num_questions={{ num_questions }}" class="learn-more-link">Learn More</a>
                     </div>
                     {% endfor %}
                 </div>
