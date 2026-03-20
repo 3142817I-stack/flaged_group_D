@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let timeRemaining = 0;
     let timerInterval = null;
     let isAnswered = false;
+    let saveResultPromises = []; // Track pending save result promises
     
     // Timer elements (will be created when game loads)
     let timerSeconds = null;
@@ -64,6 +65,9 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Start timer
         startTimer();
+        
+        // Update browser URL to reflect current question
+        updateUrl();
     }
     
     function showNoFlagsMessage(data) {
@@ -190,14 +194,24 @@ document.addEventListener('DOMContentLoaded', function() {
             mode: mode
         };
         
-        fetch("/flagd/save_quiz_result/", {
+        // Return the promise so we can wait for it
+        return fetch("/flagd/save_quiz_result/", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'X-CSRFToken': getCookie('csrftoken')
             },
             body: JSON.stringify(data)
-        }).catch(error => console.error('Error saving result:', error));
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to save result');
+            }
+            return response.json();
+        }).catch(error => {
+            console.error('Error saving result:', error);
+            // Still resolve so game can continue even if save fails
+            return {status: 'error'};
+        });
     }
     
     // Get CSRF token from cookies
@@ -214,6 +228,16 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         return cookieValue;
+    }
+    
+    // Update browser URL using History API
+    function updateUrl() {
+        const url = new URL(window.location.origin + `/flagd/play/${mode}/`);
+        url.searchParams.set('timer', timerDuration);
+        url.searchParams.set('num_questions', numQuestions);
+        url.searchParams.set('current_question', currentQuestion);
+        
+        window.history.pushState({mode, currentQuestion, numQuestions, timerDuration}, '', url);
     }
     
     // Load next question via AJAX
@@ -271,6 +295,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Reset answered flag
                 isAnswered = false;
+                
+                // Update browser URL
+                updateUrl();
             } else {
                 // No more flags - show results
                 showResults();
@@ -284,8 +311,12 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Show results page
     function showResults() {
-        const resultsUrl = `/flagd/results/${mode}/?timer=${timerDuration}&num_questions=${numQuestions}`;
-        window.location.href = resultsUrl;
+        // Wait for any pending save operations before redirecting
+        Promise.all(saveResultPromises).then(function() {
+            saveResultPromises = [];
+            const resultsUrl = `/flagd/play/${mode}/results/?timer=${timerDuration}&num_questions=${numQuestions}`;
+            window.location.href = resultsUrl;
+        });
     }
     
     // Handle when time runs out
@@ -300,15 +331,18 @@ document.addEventListener('DOMContentLoaded', function() {
         resultMessage.innerHTML = '<p class="text-warning fw-bold">Time\'s up! The answer was: <strong>' + flag.country_name + '</strong></p>';
         
         // Save incorrect result (time's up counts as wrong)
-        saveResult(false);
+        saveResultPromises.push(saveResult(false));
         
         // Navigate to next question or show results
         setTimeout(function() {
-            if (isLastQuestion) {
-                showResults();
-            } else {
-                loadNextQuestion();
-            }
+            Promise.all(saveResultPromises).then(function() {
+                saveResultPromises = [];
+                if (isLastQuestion) {
+                    showResults();
+                } else {
+                    loadNextQuestion();
+                }
+            });
         }, 3000);
     }
     
@@ -324,16 +358,19 @@ document.addEventListener('DOMContentLoaded', function() {
         
         resultMessage.innerHTML = '<p class="text-success fw-bold">Correct! Well done!</p>';
         
-        // Save correct result
-        saveResult(true);
+        // Save correct result and wait for it to complete before navigating
+        saveResultPromises.push(saveResult(true));
         
         // Navigate to next question or show results
         setTimeout(function() {
-            if (isLastQuestion) {
-                showResults();
-            } else {
-                loadNextQuestion();
-            }
+            Promise.all(saveResultPromises).then(function() {
+                saveResultPromises = [];
+                if (isLastQuestion) {
+                    showResults();
+                } else {
+                    loadNextQuestion();
+                }
+            });
         }, 1500);
     }
     
@@ -357,15 +394,18 @@ document.addEventListener('DOMContentLoaded', function() {
         resultMessage.innerHTML = '<p class="text-warning fw-bold">Skipped! The answer was: <strong>' + flag.country_name + '</strong></p>';
         
         // Save incorrect result (skipping counts as wrong)
-        saveResult(false);
+        saveResultPromises.push(saveResult(false));
         
         // Navigate to next question or show results
         setTimeout(function() {
-            if (isLastQuestion) {
-                showResults();
-            } else {
-                loadNextQuestion();
-            }
+            Promise.all(saveResultPromises).then(function() {
+                saveResultPromises = [];
+                if (isLastQuestion) {
+                    showResults();
+                } else {
+                    loadNextQuestion();
+                }
+            });
         }, 2000);
     }
     
