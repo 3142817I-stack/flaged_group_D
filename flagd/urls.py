@@ -22,7 +22,9 @@ urlpatterns = [
     #account
     path('account/', views.account, name='account'),
     path('account/sign-up/', views.sign_up, name='sign_up'),
+    path('account/guest/', views.continue_as_guest, name='continue_as_guest'), #guest user path
     path('account/settings/', views.user_settings, name='user_settings'),
     path('account/<slug:profile_name_slug>/', views.user_profile, name='user_profile'),
     path('logout/', views.user_logout, name='logout'),
+
 ]

@@ -36,12 +36,17 @@ def leaderboard(request):
     return render(request, 'flagd/leaderboard.html', context=context_dict)
 
 
-#all the play views
 def play(request):
-    # Show game mode selection only
-    context_dict = {}
-    return render(request, 'flagd/play.html', context=context_dict)
+    # Logged-in users can always access play
+    if request.user.is_authenticated:
+        return render(request, 'flagd/play.html', {})
 
+    # Guests can access play only after explicitly choosing guest mode
+    if request.session.get('guest_mode'):
+        return render(request, 'flagd/play.html', {})
+
+    # First-time unauthenticated visitors get redirected to account page
+    return redirect('flagd:account')
 
 def play_timer(request, mode):
     # Show timer selection screen
@@ -444,6 +449,7 @@ def account(request):
         if user:
             if user.is_active:
                 login(request, user)
+                request.session.pop('guest_mode', None)
                 return redirect('flagd:user_profile', profile_name_slug=user.username)
             else:
                 error_message = "Your account is disabled."
@@ -475,6 +481,7 @@ def sign_up(request):
             
             profile.save()
             login(request, user)  # login after signup completed
+            request.session.pop('guest_mode', None)
             
             # go straight to profile page
             return redirect('flagd:user_profile', profile_name_slug=user.username)
@@ -558,6 +565,10 @@ def user_settings(request):
         request,'flagd/user_settings.html', 
         {'user_form': user_form, 'profile_form': profile_form, 'password_form': password_form, 'delete_form': delete_form, 'success_message': success_message,}
     )
+
+def continue_as_guest(request):
+    request.session['guest_mode'] = True
+    return redirect('flagd:play')
 
 
 @login_required
