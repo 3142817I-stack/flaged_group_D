@@ -22,6 +22,9 @@ document.addEventListener('DOMContentLoaded', function() {
     let timerInterval = null;
     let isAnswered = false;
     let saveResultPromises = []; // Track pending save result promises
+    let questionStartTime = null; // Track when the current question started
+    let totalScore = 0; // Track cumulative score
+    let maxScorePerQuestion = 1000; // Max points per question (10000 total for 10 questions)
     
     // Timer elements (will be created when game loads)
     let timerSeconds = null;
@@ -63,7 +66,8 @@ document.addEventListener('DOMContentLoaded', function() {
         // Render the game
         renderGame();
         
-        // Start timer
+        // Start timer and record start time
+        questionStartTime = Date.now();
         startTimer();
         
         // Update browser URL to reflect current question
@@ -182,8 +186,24 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 1000);
     }
     
+    // Calculate score based on time taken (max 100 points per question, 1000 total for 10 questions)
+    function calculateScore(timeTakenMs, timerDurationSeconds) {
+        const maxScorePerQuestion = 1000;
+        const timerDurationMs = timerDurationSeconds * 1000;
+        const pointsPerMs = maxScorePerQuestion / timerDurationMs; // Points lost per millisecond
+        
+        // If time taken exceeds timer duration, score is 0
+        if (timeTakenMs >= timerDurationMs) {
+            return 0;
+        }
+        
+        // Linear scoring: score = maxScore - (points_per_ms * time_taken)
+        const rawScore = maxScorePerQuestion - (pointsPerMs * timeTakenMs);
+        return Math.max(0, Math.round(rawScore));
+    }
+    
     // Save result to session via AJAX
-    function saveResult(isCorrect) {
+    function saveResult(isCorrect, score = 0) {
         const data = {
             flag_id: flag.flag_id,
             country_name: flag.country_name,
@@ -191,7 +211,9 @@ document.addEventListener('DOMContentLoaded', function() {
             is_correct: isCorrect,
             current_question: currentQuestion,
             num_questions: numQuestions,
-            mode: mode
+            mode: mode,
+            score: score,
+            time_taken: questionStartTime ? Date.now() - questionStartTime : 0
         };
         
         // Return the promise so we can wait for it
@@ -289,8 +311,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (skipButton) skipButton.disabled = false;
                 if (resultMessage) resultMessage.innerHTML = '';
                 
-                // Reset timer
+                // Reset timer and start time
                 clearInterval(timerInterval);
+                questionStartTime = Date.now();
                 startTimer();
                 
                 // Reset answered flag
@@ -314,7 +337,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Wait for any pending save operations before redirecting
         Promise.all(saveResultPromises).then(function() {
             saveResultPromises = [];
-            const resultsUrl = `/flagd/play/${mode}/results/?timer=${timerDuration}&num_questions=${numQuestions}`;
+            const resultsUrl = `/flagd/play/${mode}/results/?timer=${timerDuration}&num_questions=${numQuestions}&total_score=${totalScore}`;
             window.location.href = resultsUrl;
         });
     }
@@ -330,8 +353,12 @@ document.addEventListener('DOMContentLoaded', function() {
         
         resultMessage.innerHTML = '<p class="text-warning fw-bold">Time\'s up! The answer was: <strong>' + flag.country_name + '</strong></p>';
         
+        // Time's up gets 0 score
+        const timeTaken = Date.now() - questionStartTime;
+        const score = 0;
+        
         // Save incorrect result (time's up counts as wrong)
-        saveResultPromises.push(saveResult(false));
+        saveResultPromises.push(saveResult(false, score));
         
         // Navigate to next question or show results
         setTimeout(function() {
@@ -358,8 +385,13 @@ document.addEventListener('DOMContentLoaded', function() {
         
         resultMessage.innerHTML = '<p class="text-success fw-bold">Correct! Well done!</p>';
         
-        // Save correct result and wait for it to complete before navigating
-        saveResultPromises.push(saveResult(true));
+        // Calculate score based on time taken
+        const timeTaken = Date.now() - questionStartTime;
+        const score = calculateScore(timeTaken, timerDuration);
+        totalScore += score;
+        
+        // Save correct result with score and wait for it to complete before navigating
+        saveResultPromises.push(saveResult(true, score));
         
         // Navigate to next question or show results
         setTimeout(function() {
@@ -380,8 +412,12 @@ document.addEventListener('DOMContentLoaded', function() {
         // Don't set isAnswered here - allow multiple attempts
         resultMessage.innerHTML = '<p class="text-danger fw-bold">Incorrect. Try again!</p>';
         
+        // Incorrect answers get 0 score
+        const timeTaken = Date.now() - questionStartTime;
+        const score = 0;
+        
         // Save incorrect result
-        saveResultPromises.push(saveResult(false));
+        saveResultPromises.push(saveResult(false, score));
     }
     
     // Handle skip button click
@@ -396,8 +432,12 @@ document.addEventListener('DOMContentLoaded', function() {
         
         resultMessage.innerHTML = '<p class="text-warning fw-bold">Skipped! The answer was: <strong>' + flag.country_name + '</strong></p>';
         
+        // Skip gets 0 score
+        const timeTaken = Date.now() - questionStartTime;
+        const score = 0;
+        
         // Save incorrect result (skipping counts as wrong)
-        saveResultPromises.push(saveResult(false));
+        saveResultPromises.push(saveResult(false, score));
         
         // Navigate to next question or show results
         setTimeout(function() {

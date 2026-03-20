@@ -280,6 +280,8 @@ def save_quiz_result(request):
             'country_code': data.get('country_code'),
             'is_correct': data.get('is_correct', False),
             'question_number': data.get('current_question'),
+            'score': data.get('score', 0),
+            'time_taken': data.get('time_taken', 0),
         }
         
         request.session['quiz_results'].append(result)
@@ -306,6 +308,7 @@ def play_results(request, mode):
     # Get timer and question count from query params
     timer_duration = request.GET.get('timer', '30')
     num_questions = request.GET.get('num_questions', '1')
+    total_score = request.GET.get('total_score', 0)
     
     # Get quiz results from session
     quiz_results = request.session.get('quiz_results', [])
@@ -315,7 +318,7 @@ def play_results(request, mode):
     correct_answers = sum(1 for r in quiz_results if r.get('is_correct'))
     incorrect_answers = total_questions - correct_answers
     
-    # Calculate percentage
+    # Calculate percentage based on correct answers
     if total_questions > 0:
         percentage = round((correct_answers / total_questions) * 100, 1)
     else:
@@ -331,13 +334,34 @@ def play_results(request, mode):
                 'flag_id': result.get('flag_id'),
             })
     
-    # Update user score if authenticated
+    # Calculate total score from session results (time-based scoring)
+    calculated_total_score = 0
+    for result in quiz_results:
+        calculated_total_score += result.get('score', 0)
+    
+    # Use the higher of the two scores (from URL or calculated)
+    final_total_score = max(int(total_score), calculated_total_score)
+    
+    # Calculate max possible score (1000 points per question, 10000 for 10 questions)
+    max_possible_score = total_questions * 1000
+    
+    # Calculate score percentage (out of 1000 for 10 questions)
+    if max_possible_score > 0:
+        score_percentage = round((final_total_score / max_possible_score) * 100, 1)
+    else:
+        score_percentage = 0
+    
+    # Update user high score ONLY for 20 seconds and 10 questions
     if request.user.is_authenticated and total_questions > 0:
         try:
             profile = request.user.userprofile
-            # Add points based on correct answers (10 points per correct answer)
-            profile.score += correct_answers * 10
-            profile.save()
+            # Check if this is a high score game (20 seconds, 10 questions)
+            is_high_score_game = (int(timer_duration) == 20 and int(num_questions) == 10)
+            
+            if is_high_score_game:
+                # Add time-based score to user profile (max 10000 for 10 questions)
+                profile.score += final_total_score
+                profile.save()
         except UserProfile.DoesNotExist:
             pass
     
@@ -351,6 +375,9 @@ def play_results(request, mode):
         'incorrect_answers': incorrect_answers,
         'percentage': percentage,
         'wrong_answers': wrong_answers,
+        'total_score': final_total_score,
+        'max_possible_score': max_possible_score,
+        'score_percentage': score_percentage,
     }
     
     return render(request, 'flagd/play_results.html', context=context_dict)
