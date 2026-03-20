@@ -39,6 +39,47 @@ body {
     filter: blur(6px);
 }
 
+
+/* Navbar styling */
+/* Navbar */
+.navbar {
+    background-color: rgba(44, 62, 80, 0.9);
+    backdrop-filter: blur(0.5rem);
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+
+.navbar-brand {
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-right: 1rem;
+}
+
+.site-logo {
+    display: block;
+    height: 2.5rem;
+    width: auto;
+    max-width: 100%;
+    object-fit: contain;
+}
+
+.profile-nav-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+}
+
+.nav-avatar {
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+}
+
+
 /* White text utility for dark backgrounds */
 .text-white {
     color: white !important;
@@ -681,5 +722,22 @@ body {
     
     .results-actions {
         flex-direction: column;
+    }
+
+    .navbar-nav {
+        align-items: flex-start !important;
+    }
+
+    .profile-nav-link {
+        justify-content: flex-start;
+    }
+
+    .site-logo {
+        height: 2rem;
+    }
+
+    .nav-avatar {
+        width: 2rem;
+        height: 2rem;
     }
 }
