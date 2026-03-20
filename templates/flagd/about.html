@@ -6,25 +6,23 @@
 {% endblock %}
 
 {% block body_block %}
-<div class="game-header">
-<h1>About Us</h1>
-</div>
-
-<div>
-    <div class =".modes-container">
-        <div class=".leaderboard-table td ">
-            Flag-D is an interactive, engaging and dynamic flag guessing website.  <br />
-            Built for everyone, whether your a student looking to brush up on their flag knowlegde for a geography quiz, <br/>
-            a Teacher looking for an interactive way to teach students, maybe your someone who wants to show of their general knowlegde or compete against others in our timed leaderboards,
-            whatever it is your looking for we've got you covered! </br>
-            <img src="{% static 'images/ThumbsUp.png' %}" alt="Picture of Thumbs up emoji" />
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm bg-white bg-opacity-75">
+                <div class="card-body">
+                    <h1 class="card-title text-center mb-4">About Us</h1>
+                    <div class="text-center mb-4">
+                        <img src="{% static 'images/ThumbsUp.png' %}" alt="Thumbs up emoji" class="img-fluid" style="max-width: 150px;">
+                    </div>
+                    <div class="fs-5">
+                        <p class="mb-3">FlagD is an interactive, engaging and dynamic flag guessing website.</p>
+                        <p class="mb-3">Built for everyone, whether you're a student looking to brush up on their flag knowledge for a geography quiz, a teacher looking for an interactive way to teach students, maybe you're someone who wants to show off their general knowledge or compete against others in our timed leaderboards - whatever it is you're looking for we've got you covered!</p>
+                        <p class="mb-3">FlagD has been designed to allow users (yes YOU reading this) to learn flags from memory and recognize countries across the world from each continent so that you can stay engaged while studying and ace that upcoming test!</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-</div>
-<div>
-<br></br>
-        Flag-D has been designed to allow users (yes YOU reading this) to learn flags from memory and recognise countries across the world from each continent </br>
-        so that you can stay engaged while studying and ace that upcoming test!  </br>
-
 </div>
 {% endblock %}
