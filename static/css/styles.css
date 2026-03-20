@@ -40,7 +40,6 @@ body {
 }
 
 
-/* Navbar styling */
 /* Navbar */
 .navbar {
     background-color: rgba(44, 62, 80, 0.9);
@@ -107,6 +106,43 @@ body {
 
 .mode-link:hover .continent-card {
     border-color: #667eea;
+}
+
+
+/* Shared content panel for pages over blurred background */
+.content-panel {
+    background: rgba(255, 255, 255, 0.88);
+    border-radius: 1.25rem;
+    box-shadow: 0 0.75rem 2rem rgba(0, 0, 0, 0.18);
+    backdrop-filter: blur(0.35rem);
+    -webkit-backdrop-filter: blur(0.35rem);
+    padding: 2rem;
+}
+
+.content-panel-hero {
+    background: rgba(44, 62, 80, 0.55);
+    border-radius: 1.5rem;
+    box-shadow: 0 0.75rem 2rem rgba(0, 0, 0, 0.22);
+    backdrop-filter: blur(0.4rem);
+    -webkit-backdrop-filter: blur(0.4rem);
+    padding: 2.5rem 2rem;
+}
+
+.content-panel-hero h1,
+.content-panel-hero h2 {
+    text-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.35);
+}
+
+/* Homepage card polish */
+.home-leaderboard-card {
+    background: rgba(255, 255, 255, 0.92);
+    border: none;
+    border-radius: 1.25rem;
+    box-shadow: 0 0.75rem 2rem rgba(0, 0, 0, 0.16);
+}
+
+.home-leaderboard-card .card-body {
+    padding: 2rem;
 }
 
 /* Back link styling */
@@ -319,6 +355,25 @@ body {
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
     text-decoration: none;
+}
+/* white version of button for dark backgrounds */
+.btn-outline-light-custom {
+    background-color: transparent;
+    color: rgba(255, 255, 255, 0.75) !important;
+    border: 2px solid rgba(255, 255, 255, 0.6);
+    padding: 10px 24px;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-light-custom:hover {
+    background-color: white;
+    color: #2c3e50 !important;
+}
+
+.text-white-soft {
+    color: rgba(255, 255, 255, 0.85) !important;
 }
 
 /* Responsive button adjustments */
@@ -659,6 +714,20 @@ body {
     .results-container {
         padding: 25px;
     }
+
+    .content-panel {
+        padding: 1.5rem;
+        border-radius: 1rem;
+    }
+
+    .content-panel-hero {
+        padding: 2rem 1.25rem;
+        border-radius: 1.25rem;
+    }
+
+    .home-leaderboard-card .card-body {
+        padding: 1.25rem;
+    }
 }
 
 @media (max-width: 480px) {
@@ -741,3 +810,4 @@ body {
         height: 2rem;
     }
 }
+
