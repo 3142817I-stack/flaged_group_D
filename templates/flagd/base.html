@@ -22,12 +22,16 @@
 
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="{% url 'flagd:index' %}">FlagD</a>
+            <a class="navbar-brand d-flex align-items-center" href="{% url 'flagd:index' %}">
+                <img src="{% static 'images/logo.png' %}" alt="FlagD logo" class="site-logo">
+            </a>
+
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
+
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
+                <ul class="navbar-nav ms-auto align-items-lg-center">
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'flagd:play' %}">Play</a>
                     </li>
@@ -40,9 +44,12 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'flagd:about' %}">About</a>
                     </li>
+
                     {% if user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'flagd:user_profile' user.username %}">Profile</a>
+                        <a class="nav-link profile-nav-link" href="{% url 'flagd:user_profile' user.username %}">
+                            <img src="{{ user.userprofile.picture.url }}" alt="{{ user.username }} profile picture" class="nav-avatar">
+                        </a>
                     </li>
                     {% else %}
                     <li class="nav-item">
@@ -53,6 +60,7 @@
             </div>
         </div>
     </nav>
+
 
     <main class="page-content">
         {% block body_block %}
