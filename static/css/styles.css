@@ -62,7 +62,27 @@ body {
     object-fit: contain;
 }
 
+<<<<<<< HEAD
+.navbar-menu a:hover {
+    background-color: #34495e;
+    color: #3498db;
+}
+
+.about-info {
+    text-align: center;
+    color: rgb(0, 0, 0);
+}
+
+.about-container {
+    display: flex;
+    background-color: rgba(255, 255, 255, 0.6); 
+}
+
+/* Page Content */
+.modes-container {
+=======
 .profile-nav-link {
+>>>>>>> a025ae6990d3ee247023b7a190c5227586c38762
     display: flex;
     align-items: center;
     justify-content: center;
